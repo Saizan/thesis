@@ -1,0 +1,51 @@
+elimination/corecursion: principled but sometimes hard to use.
+
+- example truncations as initial generated n-truncated type, how to
+  eliminate into a (n+1)-truncated.
+
+- guarded/sized types provide more general termination checking by
+  using types themselves. Both however need a more extensional
+  equality.
+
+- guarded cubical type theory includes a total fixed point
+  eliminator through a modality called later and combines it with cubical type theory
+  to obtain bisimilarity as equality for codata without resorting to
+  the reflection rule.
+
+- sized types need a prop. equality where values of (co)data can be
+  equal even when they differ by size annotations. Our approach is to
+  introduce a new quantifier for "irrelevant" size quantification.  We
+  explore its denotational semantics within a type theory designed for
+  parametricity, and a conversion checking algorithm, based on NbE,
+  for a more specific theory.
+
+  A lot of the game in the above is to try to add more equalities,
+  definitional and/or prop., to the theory while keeping type checking
+  decidable. The closer a calculus gets to be undecidable the more
+  challenging the proof that it isn't. For a core calculus with
+  natural numbers a universe and pi types we formalized the
+  correctness of a practical conversion algorithm based on weak head
+  reduction and type directed comparisons, proving decidability. We
+  expect the development to form a good basis to tackle more
+  complex theories.
+
+
+\begin{itemize}
+\item A. Abel, J. \"{O}hman, A. Vezzosi, Decidability of Conversion for Type Theory in Type Theory.
+   To appear in PACML, Issue POPL, 2018.
+
+\item A. Abel, A. Vezzosi and T. Winterhalter, Normalization by evaluation for sized dependent types.
+   PACMPL, Issue ICFP, 2017. doi: 10.1145/3110277.
+
+\item A. Nuyts, A. Vezzosi and D. Devriese, Parametric quantifiers for dependent type theory. PACMPL, Issue ICFP, 2017. doi: 10.1145/3110276.
+
+
+\item A. Vezzosi, Streams for Cubical Type Theory. Unpublished note\footnote{\url{http://www.cse.chalmers.se/~vezzosi/streams-ctt.pdf}}, 2017.
+  
+\item L. Birkedal, A. Bizjak, R. Clouston, H. Grathwohl, B. Spitters and A. Vezzosi,
+   Guarded Cubical Type Theory: Path Equality for Guarded Recursion. 25th EACSL Annual Conference on Computer Science Logic. CSL, 2016. doi: 10.4230/LIPIcs.CSL.2016.23.
+
+\item P. Capriotti, N. Kraus and A. Vezzosi, Functions out of Higher Truncations. 24th EACSL Annual Conference on Computer Science Logic. CSL, 2015. doi: 10.4230/LIPIcs.CSL.2015.359.
+
+\item A. Abel and A. Vezzosi, A formalized proof of strong normalization for guarded recursive types. LNCS: APLAS 2014; Singapore, 2014. doi: 10.1007/978-3-319-12736-1\_8.
+\end{itemize}
