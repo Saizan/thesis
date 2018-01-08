@@ -1,6 +1,6 @@
-elimination/corecursion: principled but sometimes hard to use.
+elimination/corecursion: principled (i.e. easy to model) but sometimes hard to use.
 
-- example truncations as initial generated n-truncated type, how to
+- example, truncations as initial generated n-truncated type, how to
   eliminate into a (n+1)-truncated.
 
 - guarded/sized types provide more general termination checking by
@@ -9,25 +9,23 @@ elimination/corecursion: principled but sometimes hard to use.
 
 - guarded cubical type theory includes a total fixed point
   eliminator through a modality called later and combines it with cubical type theory
-  to obtain bisimilarity as equality for codata without resorting to
+  to obtain bisimilarity as equality for guarded codata without resorting to
   the reflection rule.
 
 - sized types need a prop. equality where values of (co)data can be
   equal even when they differ by size annotations. Our approach is to
   introduce a new quantifier for "irrelevant" size quantification.  We
   explore its denotational semantics within a type theory designed for
-  parametricity, and a conversion checking algorithm, based on NbE,
+  parametricity, and study a conversion checking algorithm, based on NbE,
   for a more specific theory.
 
-  A lot of the game in the above is to try to add more equalities,
-  definitional and/or prop., to the theory while keeping type checking
-  decidable. The closer a calculus gets to be undecidable the more
-  challenging the proof that it isn't. For a core calculus with
-  natural numbers a universe and pi types we formalized the
-  correctness of a practical conversion algorithm based on weak head
-  reduction and type directed comparisons, proving decidability. We
-  expect the development to form a good basis to tackle more
-  complex theories.
+  For the extensions considered above we would like to devise a
+  practical conversion checking algorithm based on weak head
+  reduction, such that it could be easy to integrate into a proof
+  assitant. We formalized the correctness of such an algorithm for a
+  core calculus with natural numbers, a universe, and pi types,
+  proving that conversion is decidabile. We expect this development to
+  form a good basis to verify more complex theories.
 
 
 \begin{itemize}
