@@ -1,31 +1,45 @@
-elimination/corecursion: principled (i.e. easy to model) but sometimes hard to use.
+Datatypes in type theory come with an appropriate induction or
+coinduction principle which gives a precise and concise specification
+of what definitions are allowed. Such principles, however, are in some
+cases quite inconvenient to use.
 
-- example, truncations as initial generated n-truncated type, how to
-  eliminate into a (n+1)-truncated.
+An example from Homotopy Type Theory is the n-truncation of a type
+where we are allowed to eliminate only into another n-truncated type.
+For n-truncations we implement a derived eliminator into an
+(n+1)-truncated type, having instead extra conditions on the behaviour
+of the underlying function.
 
-- guarded/sized types provide more general termination checking by
-  using types themselves. Both however need a more extensional
-  equality.
+For more ordinary recursive datatypes the structural (co)recursion
+principles are quite restrictive, and syntactic termination checks
+often prevent the use of higher order combinators. By augmenting the
+types with information about well-foundness, both guarded and sized
+types allow, instead, the definition of functions in a style that is
+closer to direct general recursion.
 
-- guarded cubical type theory includes a total fixed point
-  eliminator through a modality called later and combines it with cubical type theory
-  to obtain bisimilarity as equality for guarded codata without resorting to
-  the reflection rule.
+-- add more general guarded types intro?
+In Guarded Cubical Type Theory we equip the fixed point combinator
+guarded by the later modality with a path to its one-step
+unfolding. The notion of path from Cubical Type Theory allows us to
+introduce such an equality without losing canonicity or decidability
+of conversion.
 
-- sized types need a prop. equality where values of (co)data can be
-  equal even when they differ by size annotations. Our approach is to
-  introduce a new quantifier for "irrelevant" size quantification.  We
-  explore its denotational semantics within a type theory designed for
-  parametricity, and study a conversion checking algorithm, based on NbE,
-  for a more specific theory.
+Sized types need a propositional equality where values of datatypes
+can be identified even when they differ by size annotations. Our
+approach is to introduce new quantifiers for "irrelevant" size
+quantification. We present a type theory with parametric quantifiers
+and derive initial algebras and final coalgebras using a type Size
+equipped with parametric well-founded induction. We also develop a
+conversion checking algorithm, based on NbE, for a more specific
+theory where the new quantifiers are restricted to sizes.
 
-  For the extensions considered above we would like to devise a
-  practical conversion checking algorithm based on weak head
-  reduction, such that it could be easy to integrate into a proof
-  assitant. We formalized the correctness of such an algorithm for a
-  core calculus with natural numbers, a universe, and pi types,
-  proving that conversion is decidabile. We expect this development to
-  form a good basis to verify more complex theories.
+For the extensions considered above we would like to devise a
+practical conversion checking algorithm based on weak head reduction,
+so that it would be easy to integrate into a proof assitant. We
+formalized the correctness of such an algorithm for a small but
+challenging core calculus with natural numbers, a universe, and pi
+types with eta-equality, proving that conversion is decidabile. We
+expect this development to form a good basis to verify more complex
+theories.
 
 
 \begin{itemize}
@@ -39,7 +53,7 @@ elimination/corecursion: principled (i.e. easy to model) but sometimes hard to u
 
 
 \item A. Vezzosi, Streams for Cubical Type Theory. Unpublished note\footnote{\url{http://www.cse.chalmers.se/~vezzosi/streams-ctt.pdf}}, 2017.
-  
+
 \item L. Birkedal, A. Bizjak, R. Clouston, H. Grathwohl, B. Spitters and A. Vezzosi,
    Guarded Cubical Type Theory: Path Equality for Guarded Recursion. 25th EACSL Annual Conference on Computer Science Logic. CSL, 2016. doi: 10.4230/LIPIcs.CSL.2016.23.
 
