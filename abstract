@@ -1,13 +1,28 @@
+% A general sentence about type theory first:
+% mini-history
+% applied in software verification and formalized mathemtics
+
 Datatypes in type theory come with an appropriate induction or
 coinduction principle which gives a precise and concise specification
 of what definitions are allowed. Such principles, however, are in some
 cases quite inconvenient to use.
+
+% In this thesis, we investigate more convenient alternatives
+% to direct uses of the (co)inductive principle.
+
+% As a first contribution, we consider the n-truncation of a type
+% in HoTT...
 
 An example from Homotopy Type Theory is the n-truncation of a type
 where we are allowed to eliminate only into another n-truncated type.
 For n-truncations we implement a derived eliminator into an
 (n+1)-truncated type, having instead extra conditions on the behaviour
 of the underlying function.
+
+% As a second contribution, we improve on type-based criteria
+% for termination and productivity, which allow definitions
+% by pattern matching and recursion as an alternative to
+% the use of (co)induction principles.
 
 For more ordinary recursive datatypes the structural (co)recursion
 principles are quite restrictive, and syntactic termination checks
@@ -16,12 +31,21 @@ types with information about well-foundness, both guarded and sized
 types allow, instead, the definition of functions in a style that is
 closer to direct general recursion.
 
+By augmenting the types with information about well-foundness,
+functions can be formulated in a style
+closer to direct general recursion.
+We consider two such augmentations: guarded types, and sized types.
+
+% Guarded types
+
 -- add more general guarded types intro?
 In Guarded Cubical Type Theory we equip the fixed point combinator
 guarded by the later modality with a path to its one-step
 unfolding. The notion of path from Cubical Type Theory allows us to
 introduce such an equality without losing canonicity or decidability
 of conversion.
+
+% Sized types, on the other hand, ...
 
 Sized types need a propositional equality where values of datatypes
 can be identified even when they differ by size annotations. Our
@@ -32,6 +56,8 @@ equipped with parametric well-founded induction. We also develop a
 conversion checking algorithm, based on NbE, for a more specific
 theory where the new quantifiers are restricted to sizes.
 
+% "3rd contribution"
+
 For the extensions considered above we would like to devise a
 practical conversion checking algorithm based on weak head reduction,
 so that it would be easy to integrate into a proof assitant. We
@@ -41,6 +67,8 @@ types with eta-equality, proving that conversion is decidabile. We
 expect this development to form a good basis to verify more complex
 theories.
 
+% The ideas discussed in this thesis already influence the
+% development of Agda, an proof assistant based on type theory.
 
 \begin{itemize}
 \item A. Abel, J. \"{O}hman, A. Vezzosi, Decidability of Conversion for Type Theory in Type Theory.
