@@ -28,7 +28,7 @@ We consider two such augmentations: guarded types, and sized types.
 
 Guarded types introduce a modality "later" which is used to guard the
 availability of the recursive calls provided by a general fixed point
-combinator. The denotational semantics model this by induction on the
+combinator. The denotational semantics models this by induction on the
 natural numbers, but the theory has no corresponding structure that
 could be used to provide a controlled unfolding of this combinator.
 In Guarded Cubical Type Theory we equip the fixed point
@@ -58,7 +58,7 @@ types with eta-equality, proving that conversion is decidable. We
 expect this development to form a good basis to verify more complex
 theories.
 
-The ideas discussed in this thesis already influence the
+The ideas discussed in this thesis are already influencing the
 development of Agda, a proof assistant based on type theory.
 
 \begin{itemize}
