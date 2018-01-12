@@ -1,6 +1,6 @@
 % A general sentence about type theory first:
 % mini-history
-% applied in software verification and formalized mathemtics
+% applied in software verification and formalized mathematics
 
 Datatypes in type theory come with an appropriate induction or
 coinduction principle which gives a precise and concise specification
@@ -27,11 +27,11 @@ of the underlying function.
 For more ordinary recursive datatypes the structural (co)recursion
 principles are quite restrictive, and syntactic termination checks
 often prevent the use of higher order combinators. By augmenting the
-types with information about well-foundness, both guarded and sized
+types with information about well-foundedness, both guarded and sized
 types allow, instead, the definition of functions in a style that is
 closer to direct general recursion.
 
-By augmenting the types with information about well-foundness,
+By augmenting the types with information about well-foundedness,
 functions can be formulated in a style
 closer to direct general recursion.
 We consider two such augmentations: guarded types, and sized types.
@@ -60,10 +60,10 @@ theory where the new quantifiers are restricted to sizes.
 
 For the extensions considered above we would like to devise a
 practical conversion checking algorithm based on weak head reduction,
-so that it would be easy to integrate into a proof assitant. We
+so that it would be easy to integrate into a proof assistant. We
 formalized the correctness of such an algorithm for a small but
 challenging core calculus with natural numbers, a universe, and pi
-types with eta-equality, proving that conversion is decidabile. We
+types with eta-equality, proving that conversion is decidable. We
 expect this development to form a good basis to verify more complex
 theories.
 
