@@ -1,63 +1,54 @@
-% A general sentence about type theory first:
-% mini-history
-% applied in software verification and formalized mathematics
-
+Martin L\"{o}f Type Theory, having put computation at the center of
+logical reasoning, has been shown an effective foundation for proof
+assistants, with applications like formal verification of programs and
+formalization of constructive mathematics. One ambition is for MLTT to
+also double as a practical general purpose programming language, but
+achieving that can sometimes be in tension with the rigour required
+for a logic.
 Datatypes in type theory come with an appropriate induction or
 coinduction principle which gives a precise and concise specification
-of what definitions are allowed. Such principles, however, are in some
-cases quite inconvenient to use.
+of what definitions are allowed. Such principles, however, in some
+cases get in the way of how we would like to express our programs.
+In this thesis, we investigate more flexible alternatives to direct
+uses of the (co)induction principles.
 
-% In this thesis, we investigate more convenient alternatives
-% to direct uses of the (co)inductive principle.
+As a first contribution, we consider the n-truncation of a type in
+Homotopy Type Theory, a standard formulation of its induction
+principle only allows to eliminate into another n-truncated type.
+We derive in HoTT an eliminator into (n+1)-truncated types, having
+instead extra conditions on the behaviour of the underlying function.
 
-% As a first contribution, we consider the n-truncation of a type
-% in HoTT...
-
-An example from Homotopy Type Theory is the n-truncation of a type
-where we are allowed to eliminate only into another n-truncated type.
-For n-truncations we implement a derived eliminator into an
-(n+1)-truncated type, having instead extra conditions on the behaviour
-of the underlying function.
-
-% As a second contribution, we improve on type-based criteria
-% for termination and productivity, which allow definitions
-% by pattern matching and recursion as an alternative to
-% the use of (co)induction principles.
-
-For more ordinary recursive datatypes the structural (co)recursion
-principles are quite restrictive, and syntactic termination checks
-often prevent the use of higher order combinators. By augmenting the
-types with information about well-foundedness, both guarded and sized
-types allow, instead, the definition of functions in a style that is
-closer to direct general recursion.
-
-By augmenting the types with information about well-foundedness,
-functions can be formulated in a style
-closer to direct general recursion.
+As a second contribution, we improve on type-based criteria for
+termination and productivity, which allow definitions by pattern
+matching and recursion as an alternative to the use of (co)induction
+principles. By augmenting the types with information about
+well-foundedness, functions can be formulated in a style closer to
+direct general recursion.
 We consider two such augmentations: guarded types, and sized types.
 
-% Guarded types
+Guarded types introduce a modality "later" which is used to guard the
+availability of the recursive calls provided by a general fixed point
+combinator. The denotational semantics model this by induction on the
+natural numbers, but the theory has no corresponding structure that
+could be used to provide a controlled unfolding of this combinator.
+In Guarded Cubical Type Theory we equip the fixed point
+combinator with a path to its one-step unfolding. The notion of path
+from Cubical Type Theory allows us to introduce such an equality
+without losing canonicity or decidability of conversion.
 
--- add more general guarded types intro?
-In Guarded Cubical Type Theory we equip the fixed point combinator
-guarded by the later modality with a path to its one-step
-unfolding. The notion of path from Cubical Type Theory allows us to
-introduce such an equality without losing canonicity or decidability
-of conversion.
+Sized types, on the other hand, explicitly index datatypes with size
+bounds on the height or depth of their elements. The sizes however
+end up appearing in these elements themselves, where they introduce
+distinctions that get in the way of the reasoning principle we
+expect. Our approach is to introduce new quantifiers for "irrelevant"
+size quantification. We present a type theory with parametric
+quantifiers and derive initial algebras and final coalgebras using a
+type Size equipped with parametric well-founded induction. We also
+develop a conversion checking algorithm, based on NbE, for a more
+specific theory where the new quantifiers are restricted to sizes.
 
-% Sized types, on the other hand, ...
-
-Sized types need a propositional equality where values of datatypes
-can be identified even when they differ by size annotations. Our
-approach is to introduce new quantifiers for "irrelevant" size
-quantification. We present a type theory with parametric quantifiers
-and derive initial algebras and final coalgebras using a type Size
-equipped with parametric well-founded induction. We also develop a
-conversion checking algorithm, based on NbE, for a more specific
-theory where the new quantifiers are restricted to sizes.
-
-% "3rd contribution"
-
+Finally our third contribution is concerned with the formalization of
+the operational semantics of type theory.
 For the extensions considered above we would like to devise a
 practical conversion checking algorithm based on weak head reduction,
 so that it would be easy to integrate into a proof assistant. We
@@ -67,8 +58,8 @@ types with eta-equality, proving that conversion is decidable. We
 expect this development to form a good basis to verify more complex
 theories.
 
-% The ideas discussed in this thesis already influence the
-% development of Agda, an proof assistant based on type theory.
+The ideas discussed in this thesis already influence the
+development of Agda, a proof assistant based on type theory.
 
 \begin{itemize}
 \item A. Abel, J. \"{O}hman, A. Vezzosi, Decidability of Conversion for Type Theory in Type Theory.
