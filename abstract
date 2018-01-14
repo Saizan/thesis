@@ -7,8 +7,8 @@ in some cases achieving that is in tension with the rigour required
 for a logic.
 Datatypes in type theory come with an appropriate induction or
 coinduction principle which gives a precise and concise specification
-of what definitions are allowed. Such principles, however, in some
-cases get in the way of how we would like to express our programs.
+of what definitions are allowed. However, such principles can get in
+the way of how we would like to express our programs.
 In this thesis, we investigate more flexible alternatives to direct
 uses of the (co)induction principles.
 
