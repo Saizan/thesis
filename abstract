@@ -1,5 +1,5 @@
 Martin L\"{o}f Type Theory, having put computation at the center of
-logical reasoning, has been shown an effective foundation for proof
+logical reasoning, has been shown to be an effective foundation for proof
 assistants, with applications like formal verification of programs and
 formalization of constructive mathematics. One ambition is for MLTT to
 also double as a practical general purpose programming language, but
