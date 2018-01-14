@@ -3,7 +3,7 @@ logical reasoning, has been shown to be an effective foundation for proof
 assistants, with applications like formal verification of programs and
 formalization of constructive mathematics. One ambition is for MLTT to
 also double as a practical general purpose programming language, but
-achieving that can sometimes be in tension with the rigour required
+in some cases achieving that is in tension with the rigour required
 for a logic.
 Datatypes in type theory come with an appropriate induction or
 coinduction principle which gives a precise and concise specification
