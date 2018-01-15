@@ -70,9 +70,6 @@ development of Agda, a proof assistant based on type theory.
 
 \item A. Nuyts, A. Vezzosi and D. Devriese, Parametric quantifiers for dependent type theory. PACMPL, Issue ICFP, 2017. doi: 10.1145/3110276.
 
-
-\item A. Vezzosi, Streams for Cubical Type Theory. Unpublished note\footnote{\url{http://www.cse.chalmers.se/~vezzosi/streams-ctt.pdf}}, 2017.
-
 \item L. Birkedal, A. Bizjak, R. Clouston, H. Grathwohl, B. Spitters and A. Vezzosi,
    Guarded Cubical Type Theory: Path Equality for Guarded Recursion. 25th EACSL Annual Conference on Computer Science Logic. CSL, 2016. doi: 10.4230/LIPIcs.CSL.2016.23.
 
