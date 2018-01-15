@@ -47,7 +47,7 @@ type Size equipped with parametric well-founded induction. We also
 develop a conversion checking algorithm, based on NbE, for a more
 specific theory where the new quantifiers are restricted to sizes.
 
-Finally our third contribution is concerned with the formalization of
+Finally, our third contribution is concerned with the formalization of
 the operational semantics of type theory.
 For the extensions considered above we would like to devise a
 practical conversion checking algorithm based on weak head reduction,
