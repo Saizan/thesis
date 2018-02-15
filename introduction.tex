@@ -37,3 +37,45 @@ if we run computations.
   checks, which none the less are fairly limiting, especially because
   they do not allow the programmer to provide their own reasoning to
   convince the checker.
+  
+
+\section{This Thesis}
+  
+This thesis is a collection of six papers divided into three parts.
+The first deals with the induction principle of n-truncations in HoTT.
+The second with guarded types and sized types as type-based criteria
+for termination and productivity. The third with decidability of
+conversion of type theory.
+
+\subsection{First part}
+The issues with writing programs we discussed so far also apply to
+what might seem closer to formalizions of mathematics, as soon as the
+latter involves non-trivial constructions.
+Homotopy Type Theory (cite book) is a field that connects homotopy theory and type theory.
+The connection centers around the identity type, whose elements can be
+thought of as paths connecting the two values being equated. Types are
+then interpreted as topological spaces up to homotopy.
+
+It then becomes natural to classify types according to the complexity
+of their topology, we call a type contractible if it is equivalent to
+the unit type, then we say that a type has homotopy level n (or is an
+n-type) if its (n+2)-iterated identity type is contractible. As a
+special case 0-types behave much like discrete spaces, only one path
+between any two points, and so are a suitable representation of sets (cite Bas set theory stuff?).
+It just so happens that some constructions, like pushouts, do not
+naturally preserve the homotopy level, e.g. build sets out of sets, (cite
+pushout of Unit forming circle? from book), so they need to be
+truncated to the desired level.
+Given an arbitrary type A, its n-truncation $\tr{n}{A}$ is the least
+n-type with a map $\trcon{-} : A \to \tr{n}{A}$.  Its standard
+induction principle says that a map $\tr{n}{A} \to B$ can be build
+from $A \to B$ as long as $B$ is also an n-type.
+In the paper ``Functions out of Higher Truncations'' we relax this to
+$B$ being an (n+1)-type as long as the function is constant on all (n+1) loop spaces.
+%% define loop space
+%% give a hint to the proof.
+(Superseded by ``Constructions with Non-Recursive Higher Inductive
+Types'' approximating truncations with a sequence (and
+prop. truncation with a colimit of it))
+
+%% quote from book ``homotopy n-type: a type containing no interesting homotopy above dimension n.''
