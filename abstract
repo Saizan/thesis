@@ -39,7 +39,7 @@ without losing canonicity or decidability of conversion.
 Sized types, on the other hand, explicitly index datatypes with size
 bounds on the height or depth of their elements. The sizes however
 end up appearing in these elements themselves, where they introduce
-distinctions that get in the way of the reasoning principle we
+distinctions that get in the way of the reasoning principles we
 expect. Our approach is to introduce new quantifiers for "irrelevant"
 size quantification. We present a type theory with parametric
 quantifiers and derive initial algebras and final coalgebras using a
