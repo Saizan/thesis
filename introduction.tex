@@ -1,0 +1,39 @@
+- Martin-Loef, logic based on computation, proposition-as-types,
+possiblity programming language => canonicity tells us we get results
+if we run computations.
+
+  - Succcesses in verification of mathematics and CS, see anders thesis for gonthier stuff, odd-order groups, CompCert.
+
+  - dependent types also as expressive type system for a functional
+  programming language, type guide development, type inference can in
+  specific cases generalize to program synthesis, while in general
+  invariants encoded in types constrain the possible programs towards
+  the correct one (cite conor ``gravity well'' thing).
+  %% you can program your types too!
+  
+  In this style where programs and proofs (of partial correctness) are
+  intertwined, the latter can become a burden that litters the
+  programs, which is why a variety of techniques has been developed to
+  mitigate the needs for proofs, like careful definitions mindful of judgmental equalities, small and
+  large scale reflection, other forms of tactics (cite pivotal?).
+    
+  Invariants can also be left out of programs' types entirely, but
+  even then we would still be left with the burden of writing a
+  program that the theory can recognize as total, which is something
+  that mainstream languages do not request. The burden is significant
+  enough that implementations like Agda and Idris provide pragmas to
+  circumvent it and instead accept the programmers judgment and/or
+  mark the definition as untrusted. (does Coq have something like this?).
+
+  A core calculus would tipically ensure totality by only providing
+  (co)induction combinators, which have the benefit of being easy to
+  model, and fit well with categorical semantics as universal
+  properties.  They correspond to primitive (co)recursion or folds,
+  which, as witnessed by the develpment of powerful generalizations
+  (cite ``Unifying Structured Recursion Schemes''), are not easy to
+  use directly.The state of the art in proof assistants based on type
+  theory is instead to allow pattern matching and direct recursion,
+  and deploy more or less sophisticated coverage and termination
+  checks, which none the less are fairly limiting, especially because
+  they do not allow the programmer to provide their own reasoning to
+  convince the checker.
