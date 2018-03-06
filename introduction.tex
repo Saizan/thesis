@@ -79,3 +79,391 @@ Types'' approximating truncations with a sequence (and
 prop. truncation with a colimit of it))
 
 %% quote from book ``homotopy n-type: a type containing no interesting homotopy above dimension n.''
+
+
+\subsection{Second Part}
+- motivate type-based totality checking (quite broader origins actually, then applied to type theory!)
+  - show general problems, copy some examples from papers.
+  - idea: approximations of mu/nu up to an ordinal. keep track of stages in types
+  - (well-founded) induction on stages as a typing rule for recursive definitions/semantic model
+    - examples 
+  - overlooked in sized-types: some approximation chains never truly
+  stabilize but are useful none-the-less: guarded types to abstract
+  over step-indexing models. still terminating as types and fixpoints of sized functors.
+  - Using nakano's modality instead of explicit stages.
+    - give the Fref example.
+    - also tying the knot example from Atkey?
+
+  - Funnily enough such fixed-points can be back-ported to
+    sized-types with a sufficiently strong language (e.g. higher-rank
+    size quantification):
+    
+    - example: fix with SizeLt. Type of fix is quite different from
+    (Later A -> A) -> A because we do not assume antitonicity.
+
+    - termination problems if we are so liberal with sizes: ...
+      - Maybe Size< should be banned as a type and only SizeLt allowed.
+
+    %% Not So Sure About integrating this.
+    - \inf question: what is ``fix (\ i X -> Later i X -> X) \inf''
+    supposed to be? Do we really need \inf, or should we rather have
+    unsized-fixpoints and subtyping/overloading? (c.f. Amadio 98 but
+    also Abel13 typing rules for constructors)
+     - Agda makes it complicated by \inf < \inf and \inf + 1 = \inf sometimes.
+     - and generally the structural termination checker gets a bit confused with liberal sizes and uses of \inf
+         - sizes can really make a seemingly-inductive type into more of a
+         coinductive one because of unique fixpoints and the structural
+         termination checker gets confused.
+         %% I Like This Part.
+         - really considering sizes as ordinals your programs can do
+         induction over makes for better intuition of their power and meaning than sizes as just
+         annotations to help with checking normalization of (co)recurive definitions over (co)data.
+         Good strategy to find bugs in agda: find where the two intuitions clash.
+
+
+
+-- state-of-the art and contributions i guess?
+
+- paper topics:
+
+  Guarded Types
+  ----------------------------------------------------------------------------
+  - stratified SN for a STLC with guarded recursive types formalized in Agda
+    - Takes the ``finite approximations'' model at face value and blocks reduction when deeper than n ``next''.
+    - Recursive types introduced by a coinductive type of types, term-level fix then definable by exploiting built-in type-level recursion.
+    - proof with SATs and inductive SN characterization.
+    
+    - the stratification makes it awkward to use to decide, and which
+    equality: at which n should things be compared? larger n's admit
+    more things as equal, but what's a canonical choice?
+    Maybe use the typecheking context/keeping track of how many next
+    we have gone under? But not the dynamic context, that can be
+    fooled into growing. Is this stable under substitutions?    
+    - stripped of the guarded stuff, taken as prototype impl. for poplmark reloaded.
+    
+  - GCTT
+    - GDTT, extensional dependent type theory with guarded types:
+    conversion is undecidable, because of reflection rule but also
+    because of unfolding-fix rule.
+    
+    - Removing reflection rule and making unfold-fix just a
+    prop. equality would likely recover decidability but kill
+    canonicity: we can prove closed streams prop. equal which won't be
+    definitionally equal, so some closed proofs won't reduce to
+    ``refl'' and J on them will get stuck.
+
+    - Need a more forgiving identity type, one where more proofs are
+    canonical: enter cubical type theory.
+    
+     - CTT takes the intuitions of Homotopy Type Theory a step
+     further, and uses paths as the representation of equality proofs themselves,
+     as in maps from an (abstract) interval type.
+     Then function extensionality just follows, and even univalence by a special Glue type.
+     The price to pay is more complexity in the eliminator for these paths
+     , which in fact has to be given computational meaning on a type by type basis.
+
+   - GCTT then integrates the later modality and fix into CTT, having a path for fix-unfolding.
+     The technical trick is dfix and the path at dfix, not to mess with canonical terms at other types.
+     Not having any proper eliminations for later yet, we do not need to worry about what canonical terms do.
+     The prototype typechecker handles clock quantification and in that case we actually get dfix/comp/next unstuck.
+     
+     We provide a denotational model in ``Cubes \times \omega''
+     presheaves, which proves the consistency of our theory. The construction is presented from an internal
+     perspective as much as possible (cite Pitts,Bas,.. paper on how this internal style got expanded on).
+
+  Sized Types   
+  -------------------------------------------------------------------
+  - Parametric Quantifiers for dependent type theory + Normalization by evaluation for sized dependent types
+    - too many zeros problem / not able to actually prove isomorphisms.
+    - sizes make a difference when indexing types but shouldn't make a difference in values.
+    - need a way to indicate when size quantification should behave in a uniform way
+      - standard irrelevance like pfenning does not work, because codomain relevant in sizes
+      - intersection types as in ICC* or something do not play well with eta.
+      
+    - if we look at the semantics of (co)inductive types as (co)limits
+    of chains, then the condition we would like to impose is
+    naturality. But internalizing naturality directly would require us
+    to keep track of the variance of size variables in types and into
+    the realm of directed type theory, which is not well understood
+    yet.
+    
+    - However the semantics of lambda calculus give us relational
+    parametricity, a concept which also tries to characterize the
+    well-behavedness or invariance of maps for some of their
+    arguments, and indeed also specializes to naturality in many cases.
+
+    - Parametricity has been studied before in the context of MLTT,
+    both in the sense of categorical models (cite Bob, and new ghani
+    stuff?) satisfying parametricity and as extensions of type theory
+    internalizing parametricity principles.
+
+    - those works study how Pi itself enjoys interesting parametricity
+    properties, in case the domain has an interesting notion of
+    relation. However they are confronted with limitations with
+    regards to trying to scale the identity extension lemma to
+    universes, especially a hierarchy of them.
+
+    The identity extension lemma, used to derive naturality from
+    parametricity, would require that the relational interpretation of
+    a closed type is just equality, but if this applied to our
+    interpretation of the universe we wouldn't get any interesting
+    theorem about polymorphic functions.
+
+    Another way to look at this is that we would expect parametricity
+    to imply that a function of type ``f : (A : U) -> F A -> G A''
+    would be a nat. trans. when F and G are functors.  But if we have
+    U : U_1 and take F A = Unit, G A = U, we could write
+    f = λ (A : U) _. U which does not fit into a naturality square.
+    It seems that polymorphism-as-pi only guarantees naturality when
+    the codomain cannot allow the information we are polymorphic over
+    to leak.
+
+    The solution of ``ParamDTT'' is to introduce new quantifiers which
+    restrict the use of the quantified variable through a system of
+    modalities, thus preventing such leaks even when the type of the
+    value we are currently building would be large/complex enough to
+    allow it.
+
+    With those and a type ``Size'' which supports parametric-and-non
+    well-founded induction we are able to internally build indexed
+    initial and final coalgebras for functors that satisfy and
+    internal notion of (co)continuity (similar to the condition in
+    Rasmus paper), which includes (finitary-branching) polynomial
+    functors.
+
+    The drawback is that our version of identity extension is
+    introduced as a propositional axiom, and future work is needed to
+    recover canonicity. The theory already uses concepts from
+    CoquandBernardyMoulin and Cubical Type Theory to discuss values
+    parametrically related, so we expect we can also take as model the
+    composition operation of CTT to give computational meaning to this
+    equality axiom.
+
+    We again give a denotational semantics in a presheaf model,
+    BCCube^\hat something, of cubes generated by two distinct interval
+    objects, with a map between them, which we use as domains of
+    respectively paths and bridges, the former represent equalities,
+    and the latter parametric relatedness.
+
+    -- say stuff about the nbe shit.
+    
+    - In NbE for Sized Types we also explore irrelevant size
+    quantification in a dependently typed language, but here
+    irrelevance affects judgmental equality, and our technical
+    contribution is an NbE algorithm for conversion checking.
+    
+    The main hurdle is how to reconcile typed judgmental equality with
+    irrelevance, since given $f : \all i : \Size. T i$ we would like
+    $f~i$ and $f~j$ to be equal, but they would naturally live in
+    different types $T~i$ and $T~j$.
+    \footnote{In ParamDTT, irrelevance only gives prop. equalities,
+      and we have a notion of heterogeneous equality over two
+      parametrically related types}
+    
+    - GDTT similarly has clock irrelevance, given $t : \all
+    \kappa. T$, $T # \kappa$ then $t~\kappa = t~\kappa\' : T$, the
+    side condition makes the conclusion type correct
+    \footnote{it is also required for soundness, but that's because
+      clock quantification behaves more like an actual product than
+      our $\forall$}
+    , but it's not clear how to integrate the rule into a conversion
+    algorithm as for example it can be used to prove
+    $f : \all \kappa. Bool \times T \kappa$
+    -----------------------------------------
+    $fst (f~\kappa) = fst (f~\kappa') : Bool$
+    but only by reconstructing the term $t = \lambda \kappa. fst
+    (f~\kappa)$, because the rule cannot be applied to $f$ directly
+    due to its type.
+    Maybe some form of anti-unification could be deployed but ``Clocks
+    are ticking, no more delays'' plans on turning this into a
+    propositional equality instead.
+    
+    - Our paper takes a different approach and instead of a separate
+    size irrelevance rule we make the typing and congruence rules for
+    application of $\all i. T$ to be irrelevant in the size, like so:
+
+      - get rules from the paper
+
+   The intuition is that we are approximating curry-style equality for
+   church-style terms: the sizes in the application are there as
+   annotations for a typechecking algorithm, but they are actually
+   ignored by the type theory itself.
+
+   Concretely, the reason we can be so liberal with sizes is that
+   in our type theory they never affect the overall ``shape'' of a
+   type, as size expressions only appear in size applications and as
+   indexes of datatypes, and there's no size-case. That means that the
+   same type directed eta equality rules will apply to both $t = u :
+   T[i:=a]$ and $t = u : T[i:=b]$.
+
+   - We prove conversion decidable by presenting a Normalization by
+   Evaluation algorithm its proofs of soundness and completeness.
+   The nbe includes the usual reflection and reification steps, which
+   take a type to orchestrate expansion to eta-long normal forms.   
+   The notion of type shapes comes back in the completeness proof, as
+   the types provided to reflection and reification end up diverging
+   from the type we want to compare the terms at. 
+   But all is well as long as the formers are the same approximate
+   shape as the latter (defined formally in the paper), because they
+   will trigger the same eta-expansions.
+   We just have to generalize the corresponding theorems to get the
+   induction through.
+   
+   - limitations:
+     - still wish we could have an incremental whnf and
+     head-comparison conversion checking. the algorithm would have to
+     figure out a suitable size ``b'' to use in the type in the
+     congruence rule, probably by some kind of unification algorithm.
+     
+     - ignoring sizes in typing is not necessarily how you want to do
+     it either, using the semantics from the parametric quantifiers
+     paper as a guide we want to develop a theory with an
+     heterogeneous judgmental equality.
+     The judgment would be a decidable approximation of
+     paths-over-a-bridge.
+
+\subsection{Third Part}
+- Decidability of Conversion.
+ - previous part proposes extensions of type theory.
+ - such extensions better be consistent and usefully increase expressivity, but also be implementable.
+ - Proof assistants like Coq, Agda and Idris insist on a decidable judgmental equality and normal forms for terms. 
+ - intensional type theory with decidable equality/normalization has plenty of nice properties simplifying an implementation:
+   - liberally run programs in types, useful for small scale reflection, program inference
+   - not only no need to store equality derivations, but can erase/omit types in eliminations (and introductions with bidirectionality) in terms
+      - normalization used to show equivalence between type-annotated and type-free terms (cite internship with coquand and peter).
+         - eliminations only left applied to neutrals, whose types can be inferred.
+
+   - extensional type theory implementations like NuPRL and Andromeda
+   offer you program construction tactics so that the user can have finer control over these.
+    - mitigate some but not all (annotations left?).
+
+ - When extending ITT one would like to prove such nice properties are
+ preserved, and ultimately that a reasonable typechecking algorithm
+ can be deployed. A big part is proving that there's an algorithm for
+ deciding conversion.
+   - that's not easy, a major complication is that with universes types can have arbitrary reduction. See (1) a bit later.
+ 
+ - One option is to prove a normalization theorem by for example
+ Normalization By Evaluation as we did above, then the algorithm is ``fully normalize then compare''.
+   - That's not what happens in Agda or minitt where the algorithm is ``whnf, then compare heads, then recurse in subterms''
+   - If normalization happens lazily then the two algorithms can actually have very similar executions, but that's a quite brittle correspondence.
+   
+   - However a practical elaborator/typechecker might have to
+   interleave things with unification, and then the full normalization
+   would get in the way of efficiency: great care is taken to avoid
+   unnecessary reductions, also you would still need to propagate
+   types and everything when comparing the normal forms so might as
+   well interleave reduction in?
+   
+
+ - So here in this paper we take the option of formalizing the
+ correctness of a conversion checking algorithm based on typed whnf and
+ type-directed comparison, the latter needed for eta rules on singleton types.
+
+ - we establish algorithmic equality/conversion as its own thing, a
+ relation, for which we show decidability, and equivalence to
+ judgmental equality
+
+ - regarding the relationship with normalization, from a proof that a
+ term is algorithmically equal to itself we can extract by induction a
+ normal form for the term and a proof that it's j.equal to the
+ original.
+
+ - proof goes by kripke logical relation with contexts as worlds and renamings as morphisms between worlds.
+ 
+   - by analogy to gluing constructions, could reasonably expected to
+   be extended to new theories with presheaf models by taking richer
+   morphisms than just renamings.
+   Might need to deploy kripke trick more often, because fewer
+   predicates might be naturally monotonic, also might need to care
+   about naturality.
+   -- TODO: check whether this could extend to simon's proof.
+
+ - the kripke part handles open terms.
+   
+ - the logical relation is based on reduction, we look at the whnf of
+ things, for types it's inductive and just recurses in the subterms,
+ for terms it's recursive on the proof of type reducibility, and checks that
+ the observations that apply to the term whnf, according to the whnf of
+ the type, should also be reducible.
+   - (1) once the fundamental lemma is proven, this helps clarifying
+     the meaning of the typing and equality
+     judgments, intuitive things like injectivity of type constructors,
+     and other inversions are not easy to establish given
+     the declarative formulation of judgmental equality
+     and computation in types. (check the consequences file)
+ 
+   - the fundamental theorem is proven as usual by quantifying over a
+   reducible substitution (however we package this quantification in
+   the ||-^v relation), and by showing that the identity substitution
+   is reducible.
+ 
+ - Earlier proofs relied on two distinct logical relations with their
+ own fundamental lemmas, one to establish the aforementioned inversion
+ properties, another to prove the algorithm is complete.
+ The two relations differ by which equality relation is used to
+ compare terms, judgmental or algorithmic equality/conversion.
+ 
+ Two log. rels and lemmas might be the most pragmatic presentation in
+ a paper: you are not going to write out the proof for all the cases
+ again, and it would otherwise be hard to keep track of all the
+ assumptions necessary if one tries to create an abstraction to reuse.
+
+ When it comes to formalized proofs the incentives and difficulties
+ are reversed: you do have to provide complete proofs and the
+ typechecker keeps track of whether you are missing something. So
+ after formalizing the fundamental lemma for the first log. rel. we
+ abstracted over judgmental equality in the definition of the relation
+ and the properties needed for the fundamental lemma to go through
+ while also keeping an eye on what would be easily provable for
+ algorithmic equality.  We obtained a notion we called ``generic
+ equality'' which we use to parametrize the fundamental
+ lemma\footnote{Here I'd like to insert a special acknowlegment to
+   Joakim, who has performed the bulk of the formalization and derived
+   this abstraction}, which we then instantiate twice for the two
+ equalities of interest.
+   - maybe say what things about judg. equality we need to prove that
+   algorithmic equality is a generic equality. To make it clear why we need two stages like this.
+   
+ - We believe this formalization can form a good basis for applying
+ the proof technique to more complex theories, though we might need
+ some more abstraction passes to avoid too much copy-pasting programming.
+
+ - Easy steps: more automated substition development, extension to
+ more of the standard type formers, recursive types. generalize to universe hierarchy.
+
+ - Hard steps: how do you programmatically reuse proofs about e.g. Pi
+ types when typing judgments themselves might have to change? Maybe
+ just better to have easily modifiable code than trying to predict a
+ good abstraction (e.g. plenty of nothing, other modality-annotated pi types, ..., how to fit them in?).
+ 
+ - Also doubles as a first step in bootstrapping Agda: could be
+ reasonably turned into a double checker for the core calculus.
+
+\subsection{Statement of Contribution}
+\paragraph{First part}
+Contributed the proof without higher inductive types and participated
+in writing the article.
+
+\paragraph{Second Part}
+Participated in the design and contributed most of the formalization
+of the strong normalization proof and collaborated writing the
+article.
+
+Developed GCTT and its prototype implementation in collaboration with
+Hans Bugge Grathwohl, contributed the proof that bisimulation is
+equivalent to equality, participated in writing the article.
+
+Contributed the application of parametricity to sizes and the proofs
+and writeup of the construction of (co)inductive types by induction on
+sizes and participated in the writing of other sections. Contributed
+to the formulation of the model as modified cubical sets and the use
+of the cohesive structure of the category. Contributed the use of a
+modified Glue construction to internalize naturality with regard to
+functions, and the prototype implementation as a fork of Agda.
+
+.. something about the NbE article..
+\paragraph{Third Part}
+Contributed to the formalization, in particular in setting up the
+logical relation and the reasoning with substitutions. Collaborated
+to the writing of the article.
