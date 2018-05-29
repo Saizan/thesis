@@ -7,6 +7,7 @@
 \pagewiselinenumbers
 \newcommand{\tr}[2]{\| #2 \|_{#1}}
 \newcommand{\trcon}[1]{| #1 |}
+\newcommand{\conn}{\mathsf{conn}}
 \begin{document}
 \chapter{Introduction}
 Martin-Loef, logic based on computation, proposition-as-types,
@@ -70,28 +71,54 @@ then interpreted as topological spaces up to homotopy.
 It then becomes natural to classify types according to the complexity
 of their topology, we call a type contractible if it is equivalent to
 the unit type, then we say that a type has homotopy level n (or is an
-n-type) if its (n+2)-iterated identity type is contractible. As a
-special case 0-types behave much like discrete spaces, only one path
-between any two points, and so are a suitable representation of sets (cite Bas set theory stuff?).
-It just so happens that some constructions, like pushouts, do not
-naturally preserve the homotopy level, e.g. build sets out of sets, (cite
-pushout of Unit forming circle? from book), so they need to be
-truncated to the desired level.
+n-type) if its (n+2)-iterated identity type is contractible. As an example
+0-types behave much like discrete spaces, since all paths are trivial,
+and so are a suitable representation of sets (cite Bas set theory stuff?),
+while (-1)-types are regarded as mere propositions, i.e., proof-irrelevant.
+It happens that some constructions, like pushouts, do not naturally
+preserve the homotopy level, e.g. build sets out of sets, or maybe we
+would like to turn constructive existence into a mere proposition, for
+these and other reasons it can be useful to truncate a type to a
+desired homotopy level.
 Given an arbitrary type A, its n-truncation $\tr{n}{A}$ is the least
-n-type with a map $\trcon{-} : A \to \tr{n}{A}$.  Its standard
-induction principle says that a map $\tr{n}{A} \to B$ can be build
+n-type with a map $\trcon{-} : A \to \tr{n}{A}$.  Equivalently, its standard
+induction principle says that a map $\tr{n}{A} \to B$ can be built
 from $A \to B$ as long as $B$ is also an n-type.
 In the paper ``Functions out of Higher Truncations'' we relax this to
-$B$ being an (n+1)-type as long as the function is constant on all (n+1) loop spaces.
+$B$ being an (n+1)-type as long as the function is constant on all
+(n+1) loop spaces, which we call n-constant.
+The paper gives two proofs, one based on reformulation of $\tr{n}{A}$
+as an (n+1)-truncated HIT with extra constructors, the other on the
+n-connected components of the type $A$:
+\[
+\conn_n(x) = \Sigma (a : A). \trcon{a} = x
+\]
+by contractibility of singletons we have the following equivalence
+\[
+A \equiv \Sigma (x : \tr{n}{A}). \conn_n(x)
+\]
+now an n-constant map $A \to B$ is actually a family of n-constant
+maps $f_x : \conn_n(x) \to B$. Each of the n-constant $f_x$ is actually
+determined by a single point in $B$, which is not surprising since
+collectively they are supposed to correspond to a map from
+$\tr{n}{A}$. We prove this family of equivalences
+\[
+\Pi (x : \tr{n}{A}). B \equiv \Sigma (f_x : \conn_n(x) \to B), n-\mathsf{constant}(f_x)
+\]
+by induction on $n$ and by the fact that being an equivalence is a
+(-1)-type which allows induction on $x$. We can then collect this
+family of equivalences into an equivalence of families, which
+concludes the result.
 
-TODO: define loop space, give a sketch of the proof.
+This extended elimination principle has been used in ``Constructions
+with Non-Recursive Higher Inductive Types'' (cite) to give a
+definition of propositional truncation without making use of recursive
+higher inductive types. The same paper provides alternative
+elimination principles for n-truncations, but while they allow the
+codomain to be an (n+k)-type for an arbitrary $k$, they impose
+stronger than expected constraints on the map $A \to B$, so there is
+still further work to be done in this direction.
 
-(Used in ``Constructions with Non-Recursive Higher Inductive
-Types'' approximating truncations with a sequence (and
-prop. truncation with a colimit of it)).
-Future work: handle n to n+k cases.
-
-%% quote from book ``homotopy n-type: a type containing no interesting homotopy above dimension n.''
 
 
 \subsection{Second Part}
