@@ -8,6 +8,9 @@
 \newcommand{\tr}[2]{\| #2 \|_{#1}}
 \newcommand{\trcon}[1]{| #1 |}
 \newcommand{\conn}{\mathsf{conn}}
+\newcommand{\fix}{\mathsf{fix}}
+\newcommand{\red}{\to}
+\newcommand{\red*}{\to^*}
 \begin{document}
 \chapter{Introduction}
 Martin-Loef, logic based on computation, proposition-as-types,
@@ -133,7 +136,7 @@ motivate type-based totality checking (quite broader origins actually, then appl
   \item overlooked in sized-types: some approximation chains never truly
   stabilize but are useful none-the-less: guarded types to abstract
   over step-indexing models. still terminating as types and fixpoints of sized functors.
-  \item Guarded types do this using nakano's modality instead of explicit stages.
+  \item Guarded types do this using nakano's modality instead of explicit stages. (guarded recursive types: recursion in types only under later)
     \begin{itemize}
     \item give the Fref example.
     \item also tying the knot example from Atkey?
@@ -169,12 +172,60 @@ motivate type-based totality checking (quite broader origins actually, then appl
 %% -- state-of-the art and contributions i guess?
 
 \subsubsection{Guarded Types}
-Papers:  
-\begin{itemize}
   
-\item stratified SN for a STLC with guarded recursive types formalized in Agda
+In order to integrate the $\Later$ modality into intensional type
+theory it is necessary to develop its operational semantics, even in
+the presence of free variables, so that we can formulate a useful but
+decidable judgmental equality.The following two papers confront the
+challenge to unrestricted computation that the guarded fixed point
+poses.
+
+\begin{itemize}
+\item
+  \paragraph{``A Formalized Proof of Strong Normalization for Guarded Recursive Types''}
+  studies a simply typed lambda calculus with products extended with guarded
+  recursive types and the applicative functor structure of the \Later
+  modality:
+  \[
+  \begin{array}{l}
+  \next : A \to \Later A \\
+  \star : \Later (A \to B) \to \Later A \to \Later B
+  \end{array}
+  \]
+  a guarded fixed point combinator $\mathsf{fix} : (Later A \to A) \to
+  A$ can be derived using the recursive type $T = \Later T \to A$.  
+  %% Why strong normalization. ``strong'' maybe overkill, but in
+  %% general we need more than head normalization.
+  Taking reduction to be the congruence closure of the usual $\beta$ rules
+  for application and projections plus the following law $(\next t)
+  \star (\next u) \mapsto \next (t\,u)$, would lead to an infinite
+  chain $\fix f \red f (\next (\fix f)) \red f (\next (f (\next (\fix f)))) \red
+  \ldots$, invalidating strong normalization.
+  
+  We instead lift the concept of finite approximations directly from
+  the model and define a reduction relation indexed by a natural
+  number $n$, which specifies under how many nested uses of $\next$ we
+  are still allowed to reduce.
+  
+  The idea is that if a term is supposed to represent a natural
+  transformation in the topos of trees,
+  (\mathsf{Set}^{\omega^\mathsf{op}}), then we are entitled to apply
+  it to a natural number and observe its behaviour at that stage, but
+  the sematics of $\next$ ignore its argument at stage zero, and it is
+  this base case that bootstraps the recursion that justifies $\fix$,
+  so it seems natural for reduction to also stop there.
+
+  
+  
+  
+  
+  %% TODO check if you need more reductions
+  
+
+  
   \begin{itemize}
-    \item Takes the ``finite approximations'' model at face value and blocks reduction when deeper than n ``next''.
+    \item Takes the ``finite approximations'' model at face value and
+      blocks reduction when deeper than n ``next''.
     \item Recursive types introduced by a coinductive type of types, term-level fix then definable by exploiting built-in type-level recursion.
     \item proof with Saturated sets and inductive SN characterization.
     
