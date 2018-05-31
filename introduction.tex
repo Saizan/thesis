@@ -312,7 +312,7 @@ poses.
   %% Examples of applicability of GDTT?
   Judgmental equality is undecidable, not just because of the
   reflection rule, but also due to the rule for unfolding $\fix$,
-  $\Gamma \vdash \fix f = f\,(\next\,(\fix f))$, which introduces the
+  $\Gamma \vdash \fix f = f\,(\next (\fix f))$, which introduces the
   same normalization problems as discussed above. Just removing the
   reflection rule and turning the unfolding of $\fix$ into a
   propositional equality would likely recover decidability but destroy
@@ -390,7 +390,7 @@ poses.
   i.e. support the eliminator for the equality type.  Then we just
   need to have a theory that allows to define paths corecursively, and
   for that copatterns seem to be a very good fit, as shown by this
-  example in ``Cubical Agda''\footnote{the option --cubical available from the master branch of the Agda proof assistant at the time of writing}.  
+  example in ``Cubical Agda''\footnote{the option --cubical available from the master branch of the Agda proof assistant at the time of writing}.
 \begin{verbatim}
 --   TODO use agda --latex
 record Stream (A : Set) : Set where
@@ -423,12 +423,12 @@ tail (map-id {xs = xs} i) = map-id {xs = tail xs} i
 
   Of course the usual limitations of productivity checking apply, so
   integration with type based approaches is still important.
-  
+
   %% \begin{itemize}
   %%   \item GDTT, extensional dependent type theory with guarded types:
   %%   conversion is undecidable, because of reflection rule but also
   %%   because of unfolding-fix rule.
-    
+
   %%   \item Removing reflection rule and making unfold-fix just a
   %%   prop. equality would likely recover decidability but kill
   %%   canonicity: we can prove closed streams prop. equal which won't be
@@ -448,7 +448,7 @@ tail (map-id {xs = xs} i) = map-id {xs = tail xs} i
   %%    The technical trick is dfix and the path at dfix, not to mess with canonical terms at other types.
   %%    Not having any proper eliminations for later yet, we do not need to worry about what canonical terms do.
   %%    The prototype typechecker handles clock quantification and in that case we actually get dfix/comp/next unstuck.
-     
+
   %%    We provide a denotational model in $Cubes \times \omega$
   %%    presheaves, which proves the consistency of our theory. The construction is presented from an internal
   %%    perspective as much as possible (cite Pitts,Bas,.. paper on how this internal style got expanded on).
@@ -466,14 +466,14 @@ Papers:
       \item standard irrelevance like pfenning does not work, because codomain relevant in sizes
       \item intersection types as in ICC* or something do not play well with eta.
       \end{itemize}
-      
+
     \item if we look at the semantics of (co)inductive types as (co)limits
     of chains, then the condition we would like to impose is
     naturality. But internalizing naturality directly would require us
     to keep track of the variance of size variables in types and into
     the realm of directed type theory, which is not well understood
     yet.
-    
+
     \item However the semantics of lambda calculus give us relational
     parametricity, a concept which also tries to characterize the
     well-behavedness or invariance of maps for some of their
@@ -540,12 +540,12 @@ Papers:
     which then to a prototype implementation of crisp type theory
     (cite Pitts et. al paper).
     \end{itemize}
-    
+
     \item In NbE for Sized Types we also explore irrelevant size
     quantification in a dependently typed language, but here
     irrelevance affects judgmental equality, and our technical
     contribution is an NbE algorithm for conversion checking.
-    
+
     The main hurdle is how to reconcile typed judgmental equality with
     irrelevance, since given $f : \forall i : \mathsf{Size}. T i$ we would like
     $f~i$ and $f~j$ to be equal, but they would naturally live in
@@ -569,7 +569,7 @@ Papers:
     Maybe some form of anti-unification could be deployed but ``Clocks
     are ticking, no more delays'' plans on turning this into a
     propositional equality instead.
-    
+
     \item Our paper takes a different approach and instead of a separate
     size irrelevance rule we make the typing and congruence rules for
     application of $\forall i. T$ to be irrelevant in the size, like so:
@@ -591,23 +591,23 @@ Papers:
    \item We prove conversion decidable by presenting a Normalization by
    Evaluation algorithm its proofs of soundness and completeness.
    The nbe includes the usual reflection and reification steps, which
-   take a type to orchestrate expansion to eta-long normal forms.   
+   take a type to orchestrate expansion to eta-long normal forms.
    The notion of type shapes comes back in the completeness proof, as
    the types provided to reflection and reification end up diverging
-   from the type we want to compare the terms at. 
+   from the type we want to compare the terms at.
    But all is well as long as the formers are the same approximate
    shape as the latter (defined formally in the paper), because they
    will trigger the same eta-expansions.
    We just have to generalize the corresponding theorems to get the
    induction through.
-   
+
  \item limitations:
      \begin{itemize}
      \item still wish we could have an incremental whnf and
      head-comparison conversion checking. the algorithm would have to
      figure out a suitable size ``b'' to use in the type in the
      congruence rule, probably by some kind of unification algorithm.
-     
+
      \item ignoring sizes in typing is not necessarily how you want to do
      it either, using the semantics from the parametric quantifiers
      paper as a guide we want to develop a theory with an
@@ -623,7 +623,7 @@ Decidability of Conversion.
 \begin{itemize}
  \item previous part proposes extensions of type theory.
  \item such extensions better be consistent and usefully increase expressivity, but also be implementable.
- \item Proof assistants like Coq, Agda and Idris insist on a decidable judgmental equality and normal forms for terms. 
+ \item Proof assistants like Coq, Agda and Idris insist on a decidable judgmental equality and normal forms for terms.
  \item intensional type theory with decidable equality/normalization has plenty of nice properties simplifying an implementation:
    \begin{itemize}
    \item liberally run programs in types, useful for small scale reflection, program inference
@@ -634,7 +634,7 @@ Decidability of Conversion.
          \item eliminations only left applied to neutrals, whose types can be inferred.
          \end{itemize}
      \end{itemize}
-     
+
    \item extensional type theory implementations like NuPRL and Andromeda
    offer you program construction tactics so that the user can have finer control over the construction of typing derivations.
    This mitigates some drawbacks but not all (annotations left?).
@@ -644,13 +644,13 @@ Decidability of Conversion.
  preserved, and ultimately that a reasonable typechecking algorithm
  can be deployed. A big part is proving that there's an algorithm for
  deciding conversion. It's not an easy task, a major complication is that with universes types can have arbitrary reduction. See (1) a bit later.
- 
+
  \item One option is to prove a normalization theorem by for example
    Normalization By Evaluation as we did above, then the algorithm is ``fully normalize then compare''.
    \begin{itemize}
    \item That's not what happens in Agda or minitt where the algorithm is ``whnf, then compare heads, then recurse in subterms''
    \item If normalization happens lazily then the two algorithms can actually have very similar executions, but that's a quite brittle correspondence.
-   
+
    \item However a practical elaborator/typechecker might have to
    interleave things with unification, and then the full normalization
    would get in the way of efficiency: great care is taken to avoid
@@ -673,7 +673,7 @@ Decidability of Conversion.
  original.
 
  \item proof goes by kripke logical relation with contexts as worlds and renamings as morphisms between worlds.
- 
+
    by analogy to gluing constructions, could reasonably expected to
    be extended to new theories with presheaf models by taking richer
    morphisms than just renamings.
@@ -683,7 +683,7 @@ Decidability of Conversion.
    TODO: maybe check how hard it would be to integrate simon's proof.
 
  \item the kripke part handles open terms.
-   
+
  \item the logical relation is based on reduction, we look at the whnf of
  things, for types it's inductive and just recurses in the subterms,
  for terms it's recursive on the proof of type reducibility, and checks that
@@ -696,19 +696,19 @@ Decidability of Conversion.
      and other inversions are not easy to establish given
      the declarative formulation of judgmental equality
      and computation in types. (check the consequences file)
- 
+
    \item the fundamental theorem is proven as usual by quantifying over a
    reducible substitution (however we package this quantification in
    the $||-^v$ relation), and by showing that the identity substitution
    is reducible.
    \end{itemize}
-   
+
  \item Earlier proofs relied on two distinct logical relations with their
  own fundamental lemmas, one to establish the aforementioned inversion
  properties, another to prove the algorithm is complete.
  The two relations differ by which equality relation is used to
  compare terms, judgmental or algorithmic equality/conversion.
- 
+
  Two log. rels and lemmas might be the most pragmatic presentation in
  a paper: you are not going to write out the proof for all the cases
  again, and it would otherwise be hard to keep track of all the
@@ -729,7 +729,7 @@ Decidability of Conversion.
  equalities of interest.
  Maybe say what things about judg. equality we need to prove that
    algorithmic equality is a generic equality. To make it clear why we need two stages like this.
-   
+
  \item We believe this formalization can form a good basis for applying
  the proof technique to more complex theories, though we might need
  some more abstraction passes to avoid too much copy-pasting programming.
@@ -741,11 +741,11 @@ Decidability of Conversion.
  types when typing judgments themselves might have to change? Maybe
  just better to have easily modifiable code than trying to predict a
  good abstraction (e.g. plenty of nothing, other modality-annotated pi types, ..., how to fit them in?).
- 
+
  \item Also doubles as a first step in bootstrapping Agda: could be
  reasonably turned into a double checker for the core calculus.
 \end{itemize}
- 
+
 \subsection{Statement of Contribution}
 \paragraph{First part}
 Contributed the proof without higher inductive types and participated
