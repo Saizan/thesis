@@ -11,6 +11,8 @@
 \newcommand{\fix}{\mathsf{fix}}
 \newcommand{\red}{\to}
 \newcommand{\red*}{\to^*}
+\newcommand{\dfix}{\mathsf{dfix}}
+\newcommand{\prev}{\mathsf{prev}}
 \begin{document}
 \chapter{Introduction}
 Martin-Loef, logic based on computation, proposition-as-types,
@@ -207,20 +209,82 @@ poses.
   number $n$, which specifies under how many nested uses of $\next$ we
   are still allowed to reduce.
   
-  The idea is that if a term is supposed to represent a natural
-  transformation in the topos of trees,
-  (\mathsf{Set}^{\omega^\mathsf{op}}), then we are entitled to apply
-  it to a natural number and observe its behaviour at that stage, but
-  the sematics of $\next$ ignore its argument at stage zero, and it is
-  this base case that bootstraps the recursion that justifies $\fix$,
-  so it seems natural for reduction to also stop there.
+  This strategy takes inspiration from the denotational semantics: if
+  a term is supposed to represent a natural transformation in the
+  topos of trees, (\mathsf{Set}^{\omega^\mathsf{op}}), then we are
+  entitled to apply it to a natural number and observe its behaviour
+  at that stage, but the sematics of $\next$ ignore its argument at
+  stage zero, and it is this base case that bootstraps the recursion
+  that justifies $\fix$, so it seems natural for reduction to also
+  stop there.
 
-  
-  
-  
-  
-  %% TODO check if you need more reductions
-  
+  The proof itself goes by showing that saturated sets (cite someone),
+  indexed by the stage as a natural number, form a model of the
+  calculus. By saturated set we mean a predicate over terms which sits
+  between the strongly neutral and the strongly normalizing terms, and
+  moreover supports renaming and is closed under strong head
+  expansion. Indexing by the stage is necessary because our notions
+  of neutral, normal and expansion inherit the stage from the
+  reduction strategy indicated above.
+  Eventually we prove that the predicates corresponding to the various
+  type formers are antitone with respect to the stage, so it might be
+  worthwile to reformulate the model as a refinement of the gluing of
+  the category of presheaves over typing contexts and stages, along the functor that
+  builds the presheaf of terms out of a type (cite hoffman, thorsten, ..?).
+
+  The fact that a term might have a different normal form for each
+  stage introduces some problems for using this as a strategy to
+  decide equality though, because later stages will generally
+  recognize more terms as reducing to the same normal form.
+  For base types and with a restricted context the stage does not
+  matter, as shown in (cite Rasmus and Patrick) but in general we do
+  not provide a bound on which stages to try when comparing two terms.
+  An option would be to design a type theory where the staging is expected
+  to influence the judgmental equality: one possibility is to consider
+  the stage as a fuel we earn by walking down our terms during
+  typechecking and then get to spend in the conversion rule when
+  comparing equality of types.
+  We would have a typing judgment of the form $\Gamma \vdash_n t : A$, where the stage would increase under a $\next$:
+  \[
+  \inferrule*{\Gamma \vdash_(n+1) t : A}
+             {\Gamma \vdash_n \next\,t : \Later A}
+  \]
+  and then used by conversion:
+  \begin{mathpar}
+  \inferrule*{\Gamma \vdash_n t = u : A}
+             {\Gamma \vdash_(n+1) \next\,t = \next\,u : \Later A}
+  \and
+  \inferrule*{}
+             {\Gamma \vdash_0 \next\,t = \next\,t : \Later A}
+
+  \end{mathpar}
+  toplevel definitions would then be checked at stage zero. The
+  usefulness of such a system and whether it enjoys the usual expected
+  meta-theoretic properties could be interesting future work.
+
+  Finally, since the strong normalization proof is fully formalized in
+  Agda it has been stripped of the later modality components and taken
+  as the prototype implementation for the POPLMark Reloaded challenge (cite it),
+  which aims to compare different approaches to syntax with binding in
+  proof assistants by how they apply to a fairly involved but
+  well-understood proof like strong normalization for the simply typed
+  lambda calculus.
+
+  %% Notes
+  %% \begin{itemize}
+  %%   \item Takes the ``finite approximations'' model at face value and
+  %%     blocks reduction when deeper than n ``next''.
+  %%   \item Recursive types introduced by a coinductive type of types, term-level fix then definable by exploiting built-in type-level recursion.
+  %%   \item proof with Saturated sets and inductive SN characterization.
+
+  %%   \item the stratification makes it awkward to use to decide, and which
+  %%   equality: at which n should things be compared? larger n's admit
+  %%   more things as equal, but what's a canonical choice?
+  %%   Maybe use the typecheking context/keeping track of how many next
+  %%   we have gone under? But not the dynamic context, that can be
+  %%   fooled into growing. Is this stable under substitutions?
+  %%   \item stripped of the guarded stuff, taken as prototype impl. for poplmark reloaded.
+  %% \end{itemize}
 
   
   \begin{itemize}
