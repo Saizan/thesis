@@ -1,4 +1,7 @@
 \documentclass{book}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathpartir}
 \usepackage{lineno,xcolor}
 % Running line numbers:
 \linenumbers
@@ -8,12 +11,14 @@
 \newcommand{\tr}[2]{\| #2 \|_{#1}}
 \newcommand{\trcon}[1]{| #1 |}
 \newcommand{\conn}{\mathsf{conn}}
-\newcommand{\fix}{\mathsf{fix}}
+\DeclareMathOperator{\fix}{\mathsf{fix}}
 \newcommand{\red}{\to}
-\newcommand{\red*}{\to^*}
-\newcommand{\dfix}{\mathsf{dfix}}
-\newcommand{\prev}{\mathsf{prev}}
-\newcommand{\Cube}{\mathsf{Cube}}
+\DeclareMathOperator{\Later}{\vartriangleright}
+\DeclareMathOperator{\dfix}{\mathsf{dfix}}
+\DeclareMathOperator{\prev}{\mathsf{prev}}
+\DeclareMathOperator{\next}{\ensuremath{\mathsf{next}}}
+\DeclareMathOperator{\Cube}{\square}
+\newcommand{\sd}{.\,}
 \begin{document}
 \chapter{Introduction}
 Martin-Loef, logic based on computation, proposition-as-types,
@@ -97,21 +102,21 @@ The paper gives two proofs, one based on reformulation of $\tr{n}{A}$
 as an (n+1)-truncated HIT with extra constructors, the other on the
 n-connected components of the type $A$:
 \[
-\conn_n(x) = \Sigma (a : A). \trcon{a} = x
+\conn_n(x) := \Sigma (a : A)\sd \trcon{a} = x
 \]
 by contractibility of singletons we have the following equivalence
 \[
-A \equiv \Sigma (x : \tr{n}{A}). \conn_n(x)
+A \simeq \Sigma (x : \tr{n}{A})\sd \conn_n(x)
 \]
-now an n-constant map $A \to B$ is actually a family of n-constant
+from that we can show that an n-constant map $A \to B$ is a family of n-constant
 maps $f_x : \conn_n(x) \to B$. Each of the n-constant $f_x$ is actually
 determined by a single point in $B$, which is not surprising since
 collectively they are supposed to correspond to a map from
-$\tr{n}{A}$. We prove this family of equivalences
+$\tr{n}{A}$. This motivates us to prove the following family of equivalences,
 \[
-\Pi (x : \tr{n}{A}). B \equiv \Sigma (f_x : \conn_n(x) \to B), n-\mathsf{constant}(f_x)
+\Pi\,x : \tr{n}{A}\sd (B \simeq \Sigma (f_x : \conn_n(x) \to B)\sd\textsf{n-constant}(f_x))
 \]
-by induction on $n$ and by the fact that being an equivalence is a
+we do so by induction on $n$ and by the fact that being an equivalence is a
 (-1)-type which allows induction on $x$. We can then collect this
 family of equivalences into an equivalence of families, which
 concludes the result.
@@ -183,11 +188,9 @@ decidable judgmental equality.The following two papers confront the
 challenge to unrestricted computation that the guarded fixed point
 poses.
 
-\begin{itemize}
-\item
   \paragraph{``A Formalized Proof of Strong Normalization for Guarded Recursive Types''}
   studies a simply typed lambda calculus with products extended with guarded
-  recursive types and the applicative functor structure of the \Later
+  recursive types and the applicative functor structure of the $\Later$
   modality:
   \[
   \begin{array}{l}
@@ -195,14 +198,14 @@ poses.
   \star : \Later (A \to B) \to \Later A \to \Later B
   \end{array}
   \]
-  a guarded fixed point combinator $\mathsf{fix} : (Later A \to A) \to
+  a guarded fixed point combinator $\fix : (\Later A \to A) \to
   A$ can be derived using the recursive type $T = \Later T \to A$.  
   %% Why strong normalization. ``strong'' maybe overkill, but in
   %% general we need more than head normalization.
   Taking reduction to be the congruence closure of the usual $\beta$ rules
   for application and projections plus the following law $(\next t)
   \star (\next u) \mapsto \next (t\,u)$, would lead to an infinite
-  chain $\fix f \red f (\next (\fix f)) \red f (\next (f (\next (\fix f)))) \red
+  chain $\fix f \red f\,(\next (\fix f)) \red f\,(\next (f\,(\next (\fix f)))) \red
   \ldots$, invalidating strong normalization.
   
   We instead lift the concept of finite approximations directly from
@@ -212,7 +215,7 @@ poses.
   
   This strategy takes inspiration from the denotational semantics: if
   a term is supposed to represent a natural transformation in the
-  topos of trees, (\mathsf{Set}^{\omega^\mathsf{op}}), then we are
+  topos of trees, $\mathsf{Set}^{\omega^\mathsf{op}}$, then we are
   entitled to apply it to a natural number and observe its behaviour
   at that stage, but the sematics of $\next$ ignore its argument at
   stage zero, and it is this base case that bootstraps the recursion
@@ -247,19 +250,19 @@ poses.
   comparing equality of types.
   We would have a typing judgment of the form $\Gamma \vdash_n t : A$, where the stage would increase under a $\next$:
   \[
-  \inferrule*{\Gamma \vdash_(n+1) t : A}
-             {\Gamma \vdash_n \next\,t : \Later A}
+  \inferrule*{\Gamma \vdash_{n+1} t : A}
+             {\Gamma \vdash_n \next t : \Later A}
   \]
   and then used by conversion:
   \begin{mathpar}
   \inferrule*{\Gamma \vdash_n t = u : A}
-             {\Gamma \vdash_(n+1) \next\,t = \next\,u : \Later A}
+             {\Gamma \vdash_{n+1} \next t = \next u : \Later A}
   \and
-  \inferrule*{}
-             {\Gamma \vdash_0 \next\,t = \next\,t : \Later A}
+  \inferrule*{ }
+             {\Gamma \vdash_0 \next t = \next t : \Later A}
 
   \end{mathpar}
-  toplevel definitions would then be checked at stage zero. The
+  top-level definitions would then be checked at stage zero. The
   usefulness of such a system and whether it enjoys the usual expected
   meta-theoretic properties could be interesting future work.
 
@@ -287,7 +290,6 @@ poses.
   %%   \item stripped of the guarded stuff, taken as prototype impl. for poplmark reloaded.
   %% \end{itemize}
 
-\item
   \paragraph{Guarded Cubical Type Theory: Path Equality for Guarded Recursion}
   presents Guarded Cubical Type Theory (GCTT) as an intensional
   version of the extensional Guarded Dependent Type Theory (GDTT)
@@ -300,7 +302,7 @@ poses.
   substitutions in place of the $\star$ operator: they appear as extra
   arguments of $\next$ and $\Later$ and allow the formation of types
   like $ A : \mathbb{N} \to \mathsf{U}, x : \Later \mathbb{N} \vdash
-  \Later [n \leftarrow x]. A n$.
+  \Later [n \leftarrow x]\sd A\,n$.
   GDTT furthermore makes $\fix$ a primitive, since in the presence of
   a universe it can be used to derive guarded recursion in types,
   instead of the other way around. The theory is motivated by a few
@@ -310,7 +312,7 @@ poses.
   %% Examples of applicability of GDTT?
   Judgmental equality is undecidable, not just because of the
   reflection rule, but also due to the rule for unfolding $\fix$,
-  $\Gamma \vdash \fix\,f = f (\next\,(\fix\,f))$, which introduces the
+  $\Gamma \vdash \fix f = f\,(\next\,(\fix f))$, which introduces the
   same normalization problems as discussed above. Just removing the
   reflection rule and turning the unfolding of $\fix$ into a
   propositional equality would likely recover decidability but destroy
@@ -344,13 +346,13 @@ poses.
   We obtain GCTT by extending CTT with the $\Later$ modality and $\next$ as in GDTT and adding a path $\mathsf{dfix}$
   \begin{mathpar}
     \inferrule{\Gamma \vdash f : \Later A \to A \quad \Gamma \vdash r : \mathbb{I}}
-              {\Gamma \vdash \dfix\,f\,r : \Later A}
+              {\Gamma \vdash \dfix f\,r : \Later A}
     \and
     \inferrule{}
-              {\Gamma \vdash \dfix\,f,1 = \next\,(f\,(\dfix\,f\,0)) : \Later A}
+              {\Gamma \vdash \dfix f\,1 = \next\,(f\,(\dfix f\,0)) : \Later A}
   \end{mathpar}
-  so that we can define $\fix\,f := f\,(\dfix\,f\,0)$ and prove it
-  equal to its one step unfolding by $<i> f\,(\dfix\,f,i)$.
+  so that we can define $\fix f := f\,(\dfix f\,0)$ and prove it
+  equal to its one step unfolding by $<i> f\,(\dfix f i)$.
   Choosing $\dfix$ as the primitive rather than $\fix$ avoids the
   introduction of new canonical forms at an arbitrary type $A$, and
   confines them to $\Later A$ instead.
@@ -363,13 +365,13 @@ poses.
   $\prev$\footnote{here we give only a simplified type}:
   \begin{mathpar}
     \inferrule{\Gamma \vdash_{\Delta, \kappa} t : \Later A}
-              {\Gamma \vdash_\Delta \prev \kappa. t : \forall \kappa. A}
+              {\Gamma \vdash_\Delta \prev \kappa\sd t : \forall \kappa\sd A}
               \and
-              \inferrule{}{\prev \kappa. \next\,t = \Lambda \kappa. t}
+              \inferrule{}{\prev \kappa\sd \next t = \Lambda \kappa\sd t}
   \end{mathpar}
-  In fact we can simply reduce as if $\dfix\,f\,r = \next\,(f\,(\dfix\,f\,r))$ and let $\prev$ strip away the $\next$.
+  In fact we can simply reduce as if $\dfix f\,r = \next\,(f\,(\dfix f\,r))$ and let $\prev$ strip away the $\next$.
   \[
-    (\prev\,\kappa. \dfix\,f\,r) = \Lambda \kappa. f\,(\dfix\,f\,r)
+    (\prev\,\kappa\sd \dfix f\,r) = \Lambda \kappa\sd f\,(\dfix f\,r)
   \]
   %% TODO claim we invented labels, and Patrick made a type system for them.
 
@@ -388,9 +390,9 @@ poses.
   i.e. support the eliminator for the equality type.  Then we just
   need to have a theory that allows to define paths corecursively, and
   for that copatterns seem to be a very good fit, as shown by this
-  example in ``Cubical Agda''
-  %% TODO use agda --latex
+  example in ``Cubical Agda''\footnote{the option --cubical available from the master branch of the Agda proof assistant at the time of writing}.  
 \begin{verbatim}
+--   TODO use agda --latex
 record Stream (A : Set) : Set where
   coinductive
   constructor _,_
@@ -408,11 +410,11 @@ map-id : ∀ {A} {xs : Stream A} → map (λ x → x) xs ≡ xs
 head (map-id {xs = xs} i) = head xs
 tail (map-id {xs = xs} i) = map-id {xs = tail xs} i
 \end{verbatim}
-  We have that |map-id {xs = xs}| is a path between streams, so it
-  takes an interval variable |i| as argument, and then it defines a
-  stream by giving its |head| and |tail| in such a way that they match
-  the |head| and |tail| of the streams we are proving equal.  For the
-  |tail| case we proceed by corecursion, as we would in case we were
+  We have that \verb|map-id {xs = xs}| is a path between streams, so it
+  takes an interval variable \verb|i| as argument, and then it defines a
+  stream by giving its \verb|head| and \verb|tail| in such a way that they match
+  the \verb|head| and \verb|tail| of the streams we are proving equal.  For the
+  \verb|tail| case we proceed by corecursion, as we would in case we were
   defining a simple function, rather than a path.  This use of
   corecursion is still justified in the denotational semantics because
   we model streams by taking a final coalgebra across arbitrary
@@ -451,7 +453,6 @@ tail (map-id {xs = xs} i) = map-id {xs = tail xs} i
   %%    presheaves, which proves the consistency of our theory. The construction is presented from an internal
   %%    perspective as much as possible (cite Pitts,Bas,.. paper on how this internal style got expanded on).
   %% \end{itemize}
-\end{itemize}
 
 \subsubsection{Sized Types}
 Papers:
@@ -496,10 +497,10 @@ Papers:
     theorem about polymorphic functions.
 
     Another way to look at this is that we would expect parametricity
-    to imply that a function of type ``f : (A : U) -> F A -> G A''
+    to imply that a function of type $f : (A : U) \to F A \to G A$
     would be a nat. trans. when F and G are functors.  But if we have
     U : $U_1$ and take F A = Unit, G A = U, we could write
-    f = λ (A : U) \_. U which does not fit into a naturality square.
+    $f = \lambda (A : U)\, (\_ : F A)\sd U$ which does not fit into a naturality square.
     It seems that polymorphism-as-pi only guarantees naturality when
     the codomain cannot allow the information we are polymorphic over
     to leak.
@@ -554,15 +555,15 @@ Papers:
       parametrically related types}
     \begin{itemize}
     \item GDTT similarly has clock irrelevance, given $t : \forall
-    \kappa. T$, $T \# \kappa$ then $t~\kappa = t~\kappa' : T$, the
+    \kappa\sd T$, $T \# \kappa$ then $t~\kappa = t~\kappa' : T$, the
     side condition makes the conclusion type correct
     \footnote{it is also required for soundness, but that's because
       clock quantification behaves more like an actual product than
       our $\forall$}
     , but it's not clear how to integrate the rule into a conversion
     algorithm as for example it can be used to prove
-    $f : \forall \kappa. Bool \times T \kappa \vdash fst (f~\kappa) = fst (f~\kappa') : Bool$
-    but only by reconstructing the term $t = \lambda \kappa. fst
+    $f : \forall \kappa\sd Bool \times T \kappa \vdash fst (f~\kappa) = fst (f~\kappa') : Bool$
+    but only by reconstructing the term $t = \lambda \kappa\sd fst
     (f~\kappa)$, because the rule cannot be applied to $f$ directly
     due to its type.
     Maybe some form of anti-unification could be deployed but ``Clocks
