@@ -13,6 +13,7 @@
 \newcommand{\red*}{\to^*}
 \newcommand{\dfix}{\mathsf{dfix}}
 \newcommand{\prev}{\mathsf{prev}}
+\newcommand{\Cube}{\mathsf{Cube}}
 \begin{document}
 \chapter{Introduction}
 Martin-Loef, logic based on computation, proposition-as-types,
@@ -286,51 +287,170 @@ poses.
   %%   \item stripped of the guarded stuff, taken as prototype impl. for poplmark reloaded.
   %% \end{itemize}
 
+\item
+  \paragraph{Guarded Cubical Type Theory: Path Equality for Guarded Recursion}
+  presents Guarded Cubical Type Theory (GCTT) as an intensional
+  version of the extensional Guarded Dependent Type Theory (GDTT)
+  (cite GDTT).
+
+  As the name suggests GDTT is a dependent type theory, including
+  $\Pi$ and $\Sigma$ types, a natural number type, an equality type, and a hierarchy of
+  universes, extended with the $\Later$ modality and clock
+  quantification. The main innovation is the introduction of delayed
+  substitutions in place of the $\star$ operator: they appear as extra
+  arguments of $\next$ and $\Later$ and allow the formation of types
+  like $ A : \mathbb{N} \to \mathsf{U}, x : \Later \mathbb{N} \vdash
+  \Later [n \leftarrow x]. A n$.
+  GDTT furthermore makes $\fix$ a primitive, since in the presence of
+  a universe it can be used to derive guarded recursion in types,
+  instead of the other way around. The theory is motivated by a few
+  examples of non-trivial corecursion patterns and proofs of equality
+  of guarded streams by bisimulation.
+
+  %% Examples of applicability of GDTT?
+  Judgmental equality is undecidable, not just because of the
+  reflection rule, but also due to the rule for unfolding $\fix$,
+  $\Gamma \vdash \fix\,f = f (\next\,(\fix\,f))$, which introduces the
+  same normalization problems as discussed above. Just removing the
+  reflection rule and turning the unfolding of $\fix$ into a
+  propositional equality would likely recover decidability but destroy
+  canonicity, as now there would be proofs of equality that are not
+  given by reflexivity and the eliminator for the equality type would
+  be stuck on them.
+
+  This is a problem that arises whenever we start from an intensional
+  type theory where propositional equality is seen as an inductive
+  type with reflexivity as the only constructor, and correspondingly a
+  single $\beta$ rule for the eliminator: canonicity dictates that in
+  a closed context propositional equality and judgmental equality must
+  coincide, so decidability of the latter also severly limits the
+  former. Breaking this coincidence was the main feature of Observational Type Theory (cite OTT) which got around it by
+  internalizing the setoid model of type theory and defining
+  propositional equality on a type by type basis, and so achieving
+  support for function and proposition extensionality\footnote{And expected to also support quotient types and bisimularity for coinductive types}.
+
+  Cubical Type Theory (CTT) (cite CTT) takes the intutions of Homotopy
+  Type Theory about the identity type a step further, and uses paths
+  as the representation of equality proofs themselves, as in maps from
+  an abstract interval type. Then reflexivity is not the only
+  canonical element of the equality type, function extensionality just
+  follows from abstraction for paths and function types, and
+  univalence can be proven with the support of a special
+  $\mathsf{Glue}$ type that allows to build paths in the universe from
+  equivalences. This does not come for free, as now the eliminator for
+  paths has to deal with more canonical forms, and its
+  behaviour is defined according to the type we are eliminating into.
+
+  We obtain GCTT by extending CTT with the $\Later$ modality and $\next$ as in GDTT and adding a path $\mathsf{dfix}$
+  \begin{mathpar}
+    \inferrule{\Gamma \vdash f : \Later A \to A \quad \Gamma \vdash r : \mathbb{I}}
+              {\Gamma \vdash \dfix\,f\,r : \Later A}
+    \and
+    \inferrule{}
+              {\Gamma \vdash \dfix\,f,1 = \next\,(f\,(\dfix\,f\,0)) : \Later A}
+  \end{mathpar}
+  so that we can define $\fix\,f := f\,(\dfix\,f\,0)$ and prove it
+  equal to its one step unfolding by $<i> f\,(\dfix\,f,i)$.
+  Choosing $\dfix$ as the primitive rather than $\fix$ avoids the
+  introduction of new canonical forms at an arbitrary type $A$, and
+  confines them to $\Later A$ instead.
+  Since GCTT does not have clock quantification there is no real
+  eliminator for the $\Later$ modality so there's no issue with piling
+  up more term constructors for it, however the prototype
+  implementation (cite github) has some limited support for clock
+  quantification and we were able to make $\dfix$ step forward in a
+  controlled fashion when implementing the computational behaviour of
+  $\prev$\footnote{here we give only a simplified type}:
+  \begin{mathpar}
+    \inferrule{\Gamma \vdash_{\Delta, \kappa} t : \Later A}
+              {\Gamma \vdash_\Delta \prev \kappa. t : \forall \kappa. A}
+              \and
+              \inferrule{}{\prev \kappa. \next\,t = \Lambda \kappa. t}
+  \end{mathpar}
+  In fact we can simply reduce as if $\dfix\,f\,r = \next\,(f\,(\dfix\,f\,r))$ and let $\prev$ strip away the $\next$.
+  \[
+    (\prev\,\kappa. \dfix\,f\,r) = \Lambda \kappa. f\,(\dfix\,f\,r)
+  \]
+  %% TODO claim we invented labels, and Patrick made a type system for them.
+
+  The paper provides a a denotational model in presheaves over $\Cube
+  \times \omega$ which proves the consistency of our theory.
+  The category of cubes $\Cube$ is the one used for the denotational
+  semantics of CTT, so our model can be thought of as staged cubical sets.
+
+  To be fair if the aim is just to extend CTT with coinductive types
+  whose equality is bisimulation we do not need to introduce the
+  $\Later$ modality. As I discuss in (cite cocubical
+  note)\footnote{although only for the case of streams} , cubical sets
+  already supports coinductive types in the sense of strict final
+  coalgebras\footnote{being a presheaf category they can be built as
+    limits, level-wise}, and they can be shown to be fibrant,
+  i.e. support the eliminator for the equality type.  Then we just
+  need to have a theory that allows to define paths corecursively, and
+  for that copatterns seem to be a very good fit, as shown by this
+  example in ``Cubical Agda''
+  %% TODO use agda --latex
+\begin{verbatim}
+record Stream (A : Set) : Set where
+  coinductive
+  constructor _,_
+  field
+    head : A
+    tail : Stream A
+
+open Stream
+
+map : ∀ {A B} → (A → B) → Stream A → Stream B
+head (map f xs) = f (head xs)
+tail (map f xs) = map f (tail xs)
+
+map-id : ∀ {A} {xs : Stream A} → map (λ x → x) xs ≡ xs
+head (map-id {xs = xs} i) = head xs
+tail (map-id {xs = xs} i) = map-id {xs = tail xs} i
+\end{verbatim}
+  We have that |map-id {xs = xs}| is a path between streams, so it
+  takes an interval variable |i| as argument, and then it defines a
+  stream by giving its |head| and |tail| in such a way that they match
+  the |head| and |tail| of the streams we are proving equal.  For the
+  |tail| case we proceed by corecursion, as we would in case we were
+  defining a simple function, rather than a path.  This use of
+  corecursion is still justified in the denotational semantics because
+  we model streams by taking a final coalgebra across arbitrary
+  cubical sets, so the universal property gives us a map even from a coalgebra that
+  has the interval type as a component.
+
+  Of course the usual limitations of productivity checking apply, so
+  integration with type based approaches is still important.
   
-  \begin{itemize}
-    \item Takes the ``finite approximations'' model at face value and
-      blocks reduction when deeper than n ``next''.
-    \item Recursive types introduced by a coinductive type of types, term-level fix then definable by exploiting built-in type-level recursion.
-    \item proof with Saturated sets and inductive SN characterization.
+  %% \begin{itemize}
+  %%   \item GDTT, extensional dependent type theory with guarded types:
+  %%   conversion is undecidable, because of reflection rule but also
+  %%   because of unfolding-fix rule.
     
-    \item the stratification makes it awkward to use to decide, and which
-    equality: at which n should things be compared? larger n's admit
-    more things as equal, but what's a canonical choice?
-    Maybe use the typecheking context/keeping track of how many next
-    we have gone under? But not the dynamic context, that can be
-    fooled into growing. Is this stable under substitutions?    
-    \item stripped of the guarded stuff, taken as prototype impl. for poplmark reloaded.
-  \end{itemize}
-\item GCTT
-  \begin{itemize}
-    \item GDTT, extensional dependent type theory with guarded types:
-    conversion is undecidable, because of reflection rule but also
-    because of unfolding-fix rule.
-    
-    \item Removing reflection rule and making unfold-fix just a
-    prop. equality would likely recover decidability but kill
-    canonicity: we can prove closed streams prop. equal which won't be
-    definitionally equal, so some closed proofs won't reduce to
-    ``refl'' and J on them will get stuck.
+  %%   \item Removing reflection rule and making unfold-fix just a
+  %%   prop. equality would likely recover decidability but kill
+  %%   canonicity: we can prove closed streams prop. equal which won't be
+  %%   definitionally equal, so some closed proofs won't reduce to
+  %%   ``refl'' and J on them will get stuck.
 
-    \item Need a more forgiving identity type, one where more proofs are
-    canonical: enter cubical type theory.
-    CTT takes the intuitions of Homotopy Type Theory a step
-     further, and uses paths as the representation of equality proofs themselves,
-     as in maps from an (abstract) interval type.
-     Then function extensionality just follows, and even univalence by a special Glue type.
-     The price to pay is more complexity in the eliminator for these paths
-     , which in fact has to be given computational meaning on a type by type basis.
+  %%   \item Need a more forgiving identity type, one where more proofs are
+  %%   canonical: enter cubical type theory.
+  %%   CTT takes the intuitions of Homotopy Type Theory a step
+  %%    further, and uses paths as the representation of equality proofs themselves,
+  %%    as in maps from an (abstract) interval type.
+  %%    Then function extensionality just follows, and even univalence by a special Glue type.
+  %%    The price to pay is more complexity in the eliminator for these paths
+  %%    , which in fact has to be given computational meaning on a type by type basis.
 
-   \item GCTT then integrates the later modality and fix into CTT, having a path for fix-unfolding.
-     The technical trick is dfix and the path at dfix, not to mess with canonical terms at other types.
-     Not having any proper eliminations for later yet, we do not need to worry about what canonical terms do.
-     The prototype typechecker handles clock quantification and in that case we actually get dfix/comp/next unstuck.
+  %%  \item GCTT then integrates the later modality and fix into CTT, having a path for fix-unfolding.
+  %%    The technical trick is dfix and the path at dfix, not to mess with canonical terms at other types.
+  %%    Not having any proper eliminations for later yet, we do not need to worry about what canonical terms do.
+  %%    The prototype typechecker handles clock quantification and in that case we actually get dfix/comp/next unstuck.
      
-     We provide a denotational model in $Cubes \times \omega$
-     presheaves, which proves the consistency of our theory. The construction is presented from an internal
-     perspective as much as possible (cite Pitts,Bas,.. paper on how this internal style got expanded on).
-  \end{itemize}
+  %%    We provide a denotational model in $Cubes \times \omega$
+  %%    presheaves, which proves the consistency of our theory. The construction is presented from an internal
+  %%    perspective as much as possible (cite Pitts,Bas,.. paper on how this internal style got expanded on).
+  %% \end{itemize}
 \end{itemize}
 
 \subsubsection{Sized Types}
