@@ -24,17 +24,17 @@
 
 \chapter{Introduction}
 
-Martin-Loef, logic based on computation, proposition-as-types,
+Martin-Löf, logic based on computation, proposition-as-types,
 possibility programming language, because canonicity tells us we get results
 if we run computations.
 
-  Successes in verification of mathematics and CS, see anders thesis for gonthier stuff, odd-order groups, CompCert.
+  Successes in verification of mathematics and CS, see Anders thesis for Gonthier stuff, odd-order groups, CompCert.
 
   dependent types also as expressive type system for a functional
   programming language, types guide development, type inference can in
   specific cases generalize to program synthesis, while in general
   invariants encoded in types constrain the possible programs towards
-  the correct one (cite conor ``gravity well'' thing).
+  the correct one (cite Conor ``gravity well'' thing).
   %% you can program your types too!
 
   In this style where programs and proofs (of partial correctness) are
@@ -51,11 +51,11 @@ if we run computations.
   circumvent it and instead accept the programmers judgment and/or
   mark the definition as untrusted. (does Coq have something like this?).
 
-  A core calculus would tipically ensure totality by only providing
+  A core calculus would typically ensure totality by only providing
   (co)induction combinators, which have the benefit of being easy to
   model, and fit well with categorical semantics as universal
   properties.  They correspond to primitive (co)recursion or folds,
-  which, as witnessed by the develpment of powerful generalizations
+  which, as witnessed by the development of powerful generalizations
   (cite ``Unifying Structured Recursion Schemes''), are not easy to
   use directly.The state of the art in proof assistants based on type
   theory is instead to allow pattern matching and direct recursion,
@@ -75,7 +75,7 @@ conversion of type theory.
 
 \subsection{First part}
 The issues with writing programs we discussed so far also apply to
-what might seem closer to formalizions of mathematics, as soon as the
+what might seem closer to formalizations of mathematics, as soon as the
 latter involves non-trivial constructions.
 Homotopy Type Theory (cite book) is a field that connects homotopy theory and type theory.
 The connection centers around the identity type, whose elements can be
@@ -147,7 +147,7 @@ motivate type-based totality checking (quite broader origins actually, then appl
   \item overlooked in sized-types: some approximation chains never truly
   stabilize but are useful none-the-less: guarded types to abstract
   over step-indexing models. still terminating as types and fixpoints of sized functors.
-  \item Guarded types do this using nakano's modality instead of explicit stages. (guarded recursive types: recursion in types only under later)
+  \item Guarded types do this using Nakano's modality instead of explicit stages. (guarded recursive types: recursion in types only under later)
     \begin{itemize}
     \item give the Fref example.
     \item also tying the knot example from Atkey?
@@ -163,7 +163,7 @@ motivate type-based totality checking (quite broader origins actually, then appl
     \item termination problems if we are so liberal with sizes: ..., Maybe Size< should be banned as a type and only SizeLt allowed.
     \item really considering sizes as ordinals your programs can do
          induction over gives a more accurate view of their power than sizes as just
-         annotations to help with checking normalization of (co)recurive definitions over (co)data.
+         annotations to help with checking normalization of (co)recursive definitions over (co)data.
     \end{itemize}
     \end{itemize}
     %% Not So Sure About integrating this.
@@ -220,7 +220,7 @@ poses.
   a term is supposed to represent a natural transformation in the
   topos of trees, $\mathsf{Set}^{\omega^\mathsf{op}}$, then we are
   entitled to apply it to a natural number and observe its behaviour
-  at that stage, but the sematics of $\next$ ignore its argument at
+  at that stage, but the semantics of $\next$ ignore its argument at
   stage zero, and it is this base case that bootstraps the recursion
   that justifies $\fix$, so it seems natural for reduction to also
   stop there.
@@ -235,9 +235,9 @@ poses.
   reduction strategy indicated above.
   Eventually we prove that the predicates corresponding to the various
   type formers are antitone with respect to the stage, so it might be
-  worthwile to reformulate the model as a refinement of the gluing of
+  worthwhile to reformulate the model as a refinement of the gluing of
   the category of presheaves over typing contexts and stages, along the functor that
-  builds the presheaf of terms out of a type (cite hoffman, thorsten, ..?).
+  builds the presheaf of terms out of a type (cite Hofmann, Thorsten, ..?).
 
   The fact that a term might have a different normal form for each
   stage introduces some problems for using this as a strategy to
@@ -328,13 +328,13 @@ poses.
   type with reflexivity as the only constructor, and correspondingly a
   single $\beta$ rule for the eliminator: canonicity dictates that in
   a closed context propositional equality and judgmental equality must
-  coincide, so decidability of the latter also severly limits the
+  coincide, so decidability of the latter also severely limits the
   former. Breaking this coincidence was the main feature of Observational Type Theory (cite OTT) which got around it by
   internalizing the setoid model of type theory and defining
   propositional equality on a type by type basis, and so achieving
-  support for function and proposition extensionality\footnote{And expected to also support quotient types and bisimularity for coinductive types}.
+  support for function and proposition extensionality\footnote{And expected to also support quotient types and bisimilarity for coinductive types}.
 
-  Cubical Type Theory (CTT) (cite CTT) takes the intutions of Homotopy
+  Cubical Type Theory (CTT) (cite CTT) takes the intuitions of Homotopy
   Type Theory about the identity type a step further, and uses paths
   as the representation of equality proofs themselves, as in maps from
   an abstract interval type. Then reflexivity is not the only
@@ -466,7 +466,7 @@ Papers:
     \item sizes make a difference when indexing types but shouldn't make a difference in values.
     \item need a way to indicate when size quantification should behave in a uniform way
       \begin{itemize}
-      \item standard irrelevance like pfenning does not work, because codomain relevant in sizes
+      \item standard irrelevance like Pfenning does not work, because codomain relevant in sizes
       \item intersection types as in ICC* or something do not play well with eta.
       \end{itemize}
 
@@ -483,7 +483,7 @@ Papers:
     arguments, and indeed also specializes to naturality in many cases.
 
     \item Parametricity has been studied before in the context of MLTT,
-    both in the sense of categorical models (cite Bob, and new ghani
+    both in the sense of categorical models (cite Bob, and new Ghani
     stuff?) satisfying parametricity and as extensions of type theory
     internalizing parametricity principles.
 
@@ -632,7 +632,7 @@ Decidability of Conversion.
    \item liberally run programs in types, useful for small scale reflection, program inference
    \item not only no need to store equality derivations, but can erase/omit types in eliminations (and introductions with bidirectionality) in terms
      \begin{itemize}
-     \item normalization used to show equivalence between type-annotated and type-free terms (cite internship with coquand and peter).
+     \item normalization used to show equivalence between type-annotated and type-free terms (cite internship with Coquand and peter).
          \begin{itemize}
          \item eliminations only left applied to neutrals, whose types can be inferred.
          \end{itemize}
@@ -675,17 +675,17 @@ Decidability of Conversion.
  normal form for the term and a proof that it's j.equal to the
  original.
 
- \item proof goes by kripke logical relation with contexts as worlds and renamings as morphisms between worlds.
+ \item proof goes by Kripke logical relation with contexts as worlds and renamings as morphisms between worlds.
 
    by analogy to gluing constructions, could reasonably expected to
    be extended to new theories with presheaf models by taking richer
    morphisms than just renamings.
-   Might need to deploy kripke trick more often, because fewer
+   Might need to deploy Kripke trick more often, because fewer
    predicates might be naturally monotonic, also might need to care
    about naturality.
    TODO: maybe check how hard it would be to integrate simon's proof.
 
- \item the kripke part handles open terms.
+ \item the Kripke part handles open terms.
 
  \item the logical relation is based on reduction, we look at the whnf of
  things, for types it's inductive and just recurses in the subterms,
@@ -726,7 +726,7 @@ Decidability of Conversion.
  while also keeping an eye on what would be easily provable for
  algorithmic equality.  We obtained a notion we called ``generic
  equality'' which we use to parametrize the fundamental
- lemma\footnote{Here I'd like to insert a special acknowlegment to
+ lemma\footnote{Here I'd like to insert a special acknowledgment to
    Joakim, who has performed the bulk of the formalization and derived
    this abstraction}, which we then instantiate twice for the two
  equalities of interest.
@@ -737,7 +737,7 @@ Decidability of Conversion.
  the proof technique to more complex theories, though we might need
  some more abstraction passes to avoid too much copy-pasting programming.
 
- \item Easy steps: more automated substition development, extension to
+ \item Easy steps: more automated substitution development, extension to
  more of the standard type formers, recursive types. generalize to universe hierarchy.
 
  \item Hard steps: how do you programmatically reuse proofs about e.g. Pi
