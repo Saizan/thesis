@@ -19,8 +19,11 @@
 \DeclareMathOperator{\next}{\ensuremath{\mathsf{next}}}
 \DeclareMathOperator{\Cube}{\square}
 \newcommand{\sd}{.\,}
+
 \begin{document}
+
 \chapter{Introduction}
+
 Martin-Loef, logic based on computation, proposition-as-types,
 possibility programming language, because canonicity tells us we get results
 if we run computations.
@@ -33,13 +36,13 @@ if we run computations.
   invariants encoded in types constrain the possible programs towards
   the correct one (cite conor ``gravity well'' thing).
   %% you can program your types too!
-  
+
   In this style where programs and proofs (of partial correctness) are
   intertwined, the latter can become a burden that litters the
   programs, which is why a variety of techniques has been developed to
   mitigate the needs for proofs, like careful definitions mindful of judgmental equalities, small and
   large scale reflection, other forms of tactics (cite pivotal?).
-    
+
   Invariants can also be left out of programs' types entirely, but
   even then we would still be left with the burden of writing a
   program that the theory can recognize as total, which is something
@@ -60,10 +63,10 @@ if we run computations.
   checks, which none the less are fairly limiting, especially because
   they do not allow the programmer to provide their own reasoning to
   convince the checker.
-  
+
 
 \section{This Thesis}
-  
+
 This thesis is a collection of six papers divided into three parts.
 The first deals with the induction principle of n-truncations in HoTT.
 The second with guarded types and sized types as type-based criteria
@@ -140,7 +143,7 @@ motivate type-based totality checking (quite broader origins actually, then appl
   \item show general problems, copy some examples from papers.
   \item idea: approximations of mu/nu up to an ordinal. keep track of stages in types
   \item (well-founded) induction on stages as a typing rule for recursive definitions/semantic model
-    - examples 
+    - examples
   \item overlooked in sized-types: some approximation chains never truly
   stabilize but are useful none-the-less: guarded types to abstract
   over step-indexing models. still terminating as types and fixpoints of sized functors.
@@ -149,7 +152,7 @@ motivate type-based totality checking (quite broader origins actually, then appl
     \item give the Fref example.
     \item also tying the knot example from Atkey?
     \end{itemize}
-    
+
   \item Funnily enough such fixed-points can be back-ported to
     sized-types with a sufficiently strong language (e.g. higher-rank
     size quantification):
@@ -180,7 +183,7 @@ motivate type-based totality checking (quite broader origins actually, then appl
 %% -- state-of-the art and contributions i guess?
 
 \subsubsection{Guarded Types}
-  
+
 In order to integrate the $\Later$ modality into intensional type
 theory it is necessary to develop its operational semantics, even in
 the presence of free variables, so that we can formulate a useful but
@@ -199,7 +202,7 @@ poses.
   \end{array}
   \]
   a guarded fixed point combinator $\fix : (\Later A \to A) \to
-  A$ can be derived using the recursive type $T = \Later T \to A$.  
+  A$ can be derived using the recursive type $T = \Later T \to A$.
   %% Why strong normalization. ``strong'' maybe overkill, but in
   %% general we need more than head normalization.
   Taking reduction to be the congruence closure of the usual $\beta$ rules
@@ -207,12 +210,12 @@ poses.
   \star (\next u) \mapsto \next (t\,u)$, would lead to an infinite
   chain $\fix f \red f\,(\next (\fix f)) \red f\,(\next (f\,(\next (\fix f)))) \red
   \ldots$, invalidating strong normalization.
-  
+
   We instead lift the concept of finite approximations directly from
   the model and define a reduction relation indexed by a natural
   number $n$, which specifies under how many nested uses of $\next$ we
   are still allowed to reduce.
-  
+
   This strategy takes inspiration from the denotational semantics: if
   a term is supposed to represent a natural transformation in the
   topos of trees, $\mathsf{Set}^{\omega^\mathsf{op}}$, then we are
