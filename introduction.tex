@@ -232,13 +232,17 @@ poses.
   A$ can be derived using the recursive type $T = \Later T \to A$.
   %% Why strong normalization. ``strong'' maybe overkill, but in
   %% general we need more than head normalization.
-  Taking reduction to be the congruence closure of the usual $\beta$ rules
-  for application and projections plus the following law $(\next t)
-  \star (\next u) \mapsto \next (t\,u)$, would lead to an infinite
-  chain $\fix f \red f\,(\next (\fix f)) \red f\,(\next (f\,(\next (\fix f)))) \red
-  \ldots$, invalidating strong normalization.
 
-  We instead lift the concept of finite approximations directly from
+  Full reduction for this language
+  is the congruence closure of the usual $\beta$ rules
+  for application and projections plus the law $(\next t)
+  \star (\next u) \mapsto \next (t\,u)$.
+  Full reduction invalidates strong normalization as it leads,
+  for instance, to the infinite chain
+  $\fix f \red f\,(\next (\fix f)) \red f\,(\next (f\,(\next (\fix f)))) \red
+  \ldots$
+%
+  As a remedy, we lift the concept of finite approximations directly from
   the model and define a reduction relation indexed by a natural
   number $n$, which specifies under how many nested uses of $\next$ we
   are still allowed to reduce.
