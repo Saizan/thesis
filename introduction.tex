@@ -616,135 +616,272 @@ tail (map-id {xs = xs} i) = map-id {xs = tail xs} i
      paths-over-a-bridge.
      \end{itemize}
     \end{itemize}
-    \end{itemize}
+
 \subsection{Third Part}
 
-Decidability of Conversion.
-\begin{itemize}
- \item previous part proposes extensions of type theory.
- \item such extensions better be consistent and usefully increase expressivity, but also be implementable.
- \item Proof assistants like Coq, Agda and Idris insist on a decidable judgmental equality and normal forms for terms.
- \item intensional type theory with decidable equality/normalization has plenty of nice properties simplifying an implementation:
-   \begin{itemize}
-   \item liberally run programs in types, useful for small scale reflection, program inference
-   \item not only no need to store equality derivations, but can erase/omit types in eliminations (and introductions with bidirectionality) in terms
-     \begin{itemize}
-     \item normalization used to show equivalence between type-annotated and type-free terms (cite internship with coquand and peter).
-         \begin{itemize}
-         \item eliminations only left applied to neutrals, whose types can be inferred.
-         \end{itemize}
-     \end{itemize}
+\subsubsection{Decidability of Conversion}
 
-   \item extensional type theory implementations like NuPRL and Andromeda
-   offer you program construction tactics so that the user can have finer control over the construction of typing derivations.
-   This mitigates some drawbacks but not all (annotations left?).
-   \end{itemize}
+The previous part of this thesis proposes extensions of type theory
+aimed at increasing its expressivity. Such extensions are shown
+consistent through various models but we also want them to be
+practically implementable.
 
- \item When extending ITT one would like to prove such nice properties are
- preserved, and ultimately that a reasonable typechecking algorithm
- can be deployed. A big part is proving that there's an algorithm for
- deciding conversion. It's not an easy task, a major complication is that with universes types can have arbitrary reduction. See (1) a bit later.
+Proof assistants like Coq and Agda (cite?) insist on decidable
+judgmental equality and normal forms for terms. This simplifies the
+implementation by being able to omit the storage not only of typing
+derivations but also type annotations in terms. That is because
+redexes can sometimes be typed by fairly different derivations if we
+don't have the necessary annotations, but normal forms do not have
+this problem because we can deploy a bidirectional typechecking
+algorithm and infer some of those annotations back as needed. Another
+advandage of normalization is that one can rely on it for techniques
+like small scale reflection, which make use of computation at the
+level of types to automatically simplify goals rather than having to
+produce a proof term that encodes each computation step.
 
- \item One option is to prove a normalization theorem by for example
-   Normalization By Evaluation as we did above, then the algorithm is ``fully normalize then compare''.
-   \begin{itemize}
-   \item That's not what happens in Agda or minitt where the algorithm is ``whnf, then compare heads, then recurse in subterms''
-   \item If normalization happens lazily then the two algorithms can actually have very similar executions, but that's a quite brittle correspondence.
+When extending type theory then one would like to prove that such nice
+properties are preserved, and ultimately that a reasonable
+typechecking algorithm can be deployed. A big part is proving that
+there is an algorithm for deciding whether two terms are equal at a
+given type, i.e. conversion. It's not a straightforward task, because
+the behaviour of types is complicated by universes allowing arbitrary
+reductions in them, and the equality of terms is affected by types
+through the eta rule for dependent functions.
 
-   \item However a practical elaborator/typechecker might have to
-   interleave things with unification, and then the full normalization
-   would get in the way of efficiency: great care is taken to avoid
-   unnecessary reductions, also you would still need to propagate
-   types and everything when comparing the normal forms so might as
-   well interleave reduction in?
-   \end{itemize}
+If one only wants to show decidability, one option is to prove a
+normalization theorem using, for example, a normalization by
+evaluation technique as we did above. The decision procedure would
+then be to fully normalize each term, then compare the normal forms.
+However that is not how conversion checking is implemented in
+e.g. Agda or MiniTT (cite), where the algorithm is instead to reduce
+to weak head normal form, then compare the heads, and then recurse in
+subterms. If normalization happens lazily then the two algorithms can
+actually have very similar executions, but in such a setup it might be
+hard to tell if we are normalizing more than necessary. Also a
+practical typechecker probably wants to insert short cuts like
+checking for syntactic equality to skip recursion on subterms when
+possible. Side-stepping normalization is especially useful in the
+presence of unification variables, the incremental comparison
+algorithm can be easily extended to the case where one or both of the
+terms is an application of an unification variable and attempt to
+solve it without further reduction.
+%% TODO say something about constraint solving and propagating type information?
 
- \item So here in this paper we take the option of formalizing the
- correctness of a conversion checking algorithm based on typed whnf and
- type-directed comparison, the latter needed for eta rules on singleton types.
 
- \item we establish algorithmic equality/conversion as its own thing, a
- relation, for which we show decidability, and equivalence to
- judgmental equality
+\paragraph{Decidability of Type Theory in Type Theory} for the reasons above,
+takes the option of formalizing the correctness of a conversion
+checking algorithm based on typed weak head normalization and
+type-directed comparison. Specifically we define algorithmic equality
+as an inductively defined relation, which then we show decidable and
+equivalent to judgmental equality.\footnote{Regarding the relationship with
+normalization, from a proof that a term is algorithmically equal to
+itself we can extract its normal form and a
+proof that it is judgmetally to the term.}
 
- \item regarding the relationship with normalization, from a proof that a
- term is algorithmically equal to itself we can extract by induction a
- normal form for the term and a proof that it's j.equal to the
- original.
+Our proof goes by a kripke logical relation with contexts as worlds
+and renamings as morphisms between worlds. The relation is over open
+terms, hence the kripke structure, and based on reduction, in the
+sense that membership is determined by the weak head normal form
+(whnf) of a term, because of this we call it reducibility. For types
+the relation is defined inductively and just recurses in the subterms
+of its whnf, for terms in a type it is defined by recursion on the
+proof that the type is reducible, and it checks that the observations
+that are possible for the whnf of the term are also reducible. By the
+same recursion we also define notions of reducible equality for types
+and terms. The fundamental theorem is proven as usual by quantifying
+over a reducible substitution\footnote{however we package this
+  quantification into its own $\Vdash^v$ relation}, and by showing
+that the identity substitution is reducible. It is only after this
+proof that a lot of intuitions about the typing and equality judgments
+are validated: injectivity of type constructors and other inversion
+lemmas are not easy to establish from the declarative formulations of
+judgmental equality.
 
- \item proof goes by kripke logical relation with contexts as worlds and renamings as morphisms between worlds.
+Establishing such properties is however not the whole battle, earlier
+formulations of this proof (cite Abel-Schrerer, also TYPES abstract)
+relied on a second distinct logical relation with its own fundamental
+lemma to prove that algorithmic equality is complete, i.e. it is
+implied by judgmental equality. The two logical relations differ by
+which equality relation they imply through their ``escape'' lemmas, in one
+case judgmental in the other algorithmic.
 
-   by analogy to gluing constructions, could reasonably expected to
-   be extended to new theories with presheaf models by taking richer
-   morphisms than just renamings.
-   Might need to deploy kripke trick more often, because fewer
-   predicates might be naturally monotonic, also might need to care
-   about naturality.
-   TODO: maybe check how hard it would be to integrate simon's proof.
+Using two logical relations and fundamental lemmas might be the most
+pragmatic presentation when doing things informally: most cases of the
+proof will be omitted anyway, and it would otherwise be hard to keep
+track of all the assumptions necessary if one tries to create an
+abstraction to reuse. However when it comes to formalized proofs the
+incentives and difficulties are reversed: you do have to provide
+complete proofs and the typechecker helps you keep track of whether
+you are missing something. So after formalizing the fundamental lemma
+for the first logical relation we abstracted over judgmental equality
+in the definition of the relation and collected the properties needed
+for the proof of the fundamental lemma, while also keeping an eye on
+what would be easily provable for algorithmic equality.  Doing so we
+obtained a notion we called ``generic equality'' which we use to
+parametrize the reducibility relation and its fundamental
+lemma\footnote{Here I'd like to insert a special acknowlegment to
+  Joakim, who has performed the bulk of the formalization and derived
+  this abstraction}. We cna then instantiate this parametrized result
+twice, for the two equalities of interest, to complete the overall
+proof of decidability of conversion.
 
- \item the kripke part handles open terms.
+%% TODO Maybe say what things about judg. equality we need to prove that
+%%   algorithmic equality is a generic equality. To make it clear why we need two stages like this.
 
- \item the logical relation is based on reduction, we look at the whnf of
- things, for types it's inductive and just recurses in the subterms,
- for terms it's recursive on the proof of type reducibility, and checks that
- the observations that apply to the term whnf, according to the whnf of
- the type, should also be reducible.
-   \begin{itemize}
-   \item (1) once the fundamental lemma is proven, this helps clarifying
-     the meaning of the typing and equality
-     judgments, intuitive things like injectivity of type constructors,
-     and other inversions are not easy to establish given
-     the declarative formulation of judgmental equality
-     and computation in types. (check the consequences file)
+While the article only handles a fairly minimal type theory, we
+believe this formalization can form a good basis for applying the
+proof technique to more complex theories. For example the kripke
+structure could be extended to contain more than just renamings, but
+also maps from the indexing category for type theories whose
+denotational model is based on presheaf models. An example of a
+similar setup can be seen in the proof of canonicity for Cubical Type
+Theory (cite simon).
 
-   \item the fundamental theorem is proven as usual by quantifying over a
-   reducible substitution (however we package this quantification in
-   the $||-^v$ relation), and by showing that the identity substitution
-   is reducible.
-   \end{itemize}
+This formalization can also be seen as a step towards bootstrapping
+Agda, as it could reasonably be extended into a double checker for the
+core calculus.
 
- \item Earlier proofs relied on two distinct logical relations with their
- own fundamental lemmas, one to establish the aforementioned inversion
- properties, another to prove the algorithm is complete.
- The two relations differ by which equality relation is used to
- compare terms, judgmental or algorithmic equality/conversion.
 
- Two log. rels and lemmas might be the most pragmatic presentation in
- a paper: you are not going to write out the proof for all the cases
- again, and it would otherwise be hard to keep track of all the
- assumptions necessary if one tries to create an abstraction to reuse.
+%% \begin{itemize}
+%%  \item previous part proposes extensions of type theory.
+%%  \item such extensions better be consistent and usefully increase expressivity, but also be implementable.
+%%  \item Proof assistants like Coq, Agda and Idris insist on a decidable judgmental equality and normal forms for terms.
+%%  \item intensional type theory with decidable equality/normalization has plenty of nice properties simplifying an implementation:
+%%    \begin{itemize}
+%%    \item liberally run programs in types, useful for small scale reflection, program inference
+%%    \item not only no need to store equality derivations, but can erase/omit types in eliminations (and introductions with bidirectionality) in terms
+%%      \begin{itemize}
+%%      \item normalization used to show equivalence between type-annotated and type-free terms (cite internship with coquand and peter).
+%%          \begin{itemize}
+%%          \item eliminations only left applied to neutrals, whose types can be inferred.
+%%          \end{itemize}
+%%      \end{itemize}
 
- When it comes to formalized proofs the incentives and difficulties
- are reversed: you do have to provide complete proofs and the
- typechecker keeps track of whether you are missing something. So
- after formalizing the fundamental lemma for the first log. rel. we
- abstracted over judgmental equality in the definition of the relation
- and the properties needed for the fundamental lemma to go through
- while also keeping an eye on what would be easily provable for
- algorithmic equality.  We obtained a notion we called ``generic
- equality'' which we use to parametrize the fundamental
- lemma\footnote{Here I'd like to insert a special acknowlegment to
-   Joakim, who has performed the bulk of the formalization and derived
-   this abstraction}, which we then instantiate twice for the two
- equalities of interest.
- Maybe say what things about judg. equality we need to prove that
-   algorithmic equality is a generic equality. To make it clear why we need two stages like this.
+%%    \item extensional type theory implementations like NuPRL and Andromeda
+%%    offer you program construction tactics so that the user can have finer control over the construction of typing derivations.
+%%    This mitigates some drawbacks but not all (annotations left?).
+%%    \end{itemize}
 
- \item We believe this formalization can form a good basis for applying
- the proof technique to more complex theories, though we might need
- some more abstraction passes to avoid too much copy-pasting programming.
+%%  \item When extending ITT one would like to prove such nice properties are
+%%  preserved, and ultimately that a reasonable typechecking algorithm
+%%  can be deployed. A big part is proving that there's an algorithm for
+%%  deciding conversion.
+%%  It's not an easy task, a major complication is that with universes types can have arbitrary reduction
+%%  and given that we support eta rules equality of terms depends on their type.
+%%  %%See (1) a bit later.
 
- \item Easy steps: more automated substition development, extension to
- more of the standard type formers, recursive types. generalize to universe hierarchy.
+%%  \item One option is to prove a normalization theorem by for example
+%%    Normalization By Evaluation as we did above, then the algorithm is ``fully normalize then compare''.
+%%    \begin{itemize}
+%%    \item That's not what happens in Agda or minitt where the algorithm is ``whnf, then compare heads, then recurse in subterms''
+%%    \item If normalization happens lazily then the two algorithms can actually have very similar executions, but that's a quite brittle correspondence.
 
- \item Hard steps: how do you programmatically reuse proofs about e.g. Pi
- types when typing judgments themselves might have to change? Maybe
- just better to have easily modifiable code than trying to predict a
- good abstraction (e.g. plenty of nothing, other modality-annotated pi types, ..., how to fit them in?).
+%%    \item However a practical elaborator/typechecker might have to
+%%    interleave things with unification, and then the full normalization
+%%    would get in the way of efficiency: great care is taken to avoid
+%%    unnecessary reductions, also you would still need to propagate
+%%    types and everything when comparing the normal forms so might as
+%%    well interleave reduction in?
+%%    Also it's relatively easy to introduce metas to this: when
+%%    comparing heads if one side is a meta applied to some arguments,
+%%    you can try to solve it.
+%%    \end{itemize}
 
- \item Also doubles as a first step in bootstrapping Agda: could be
- reasonably turned into a double checker for the core calculus.
-\end{itemize}
+%%  \item So here in this paper we take the option of formalizing the
+%%  correctness of a conversion checking algorithm based on typed whnf and
+%%  type-directed comparison, the latter needed for eta rules on singleton types.
+
+%%  \item we establish algorithmic equality/conversion as its own thing, a
+%%  relation, for which we show decidability, and equivalence to
+%%  judgmental equality
+
+%%  \item regarding the relationship with normalization, from a proof that a
+%%  term is algorithmically equal to itself we can extract by induction a
+%%  normal form for the term and a proof that it's j.equal to the
+%%  original.
+
+%%  \item proof goes by kripke logical relation with contexts as worlds and renamings as morphisms between worlds.
+
+%%    by analogy to gluing constructions, could reasonably expected to
+%%    be extended to new theories with presheaf models by taking richer
+%%    morphisms than just renamings.
+%%    Might need to deploy kripke trick more often, because fewer
+%%    predicates might be naturally monotonic, also might need to care
+%%    about naturality.
+%%    TODO: maybe check how hard it would be to integrate simon's proof.
+
+%%  \item the kripke part handles open terms.
+
+%%  \item the logical relation is based on reduction, we look at the whnf of
+%%  things, for types it's inductive and just recurses in the subterms,
+%%  for terms it's recursive on the proof of type reducibility, and checks that
+%%  the observations that apply to the term whnf, according to the whnf of
+%%  the type, should also be reducible.
+%%    \begin{itemize}
+%%    \item (1) once the fundamental lemma is proven, this helps clarifying
+%%      the meaning of the typing and equality
+%%      judgments, intuitive things like injectivity of type constructors,
+%%      and other inversions are not easy to establish given
+%%      the declarative formulation of judgmental equality
+%%      and computation in types. (check the consequences file)
+
+%%    \item the fundamental theorem is proven as usual by quantifying over a
+%%    reducible substitution (however we package this quantification in
+%%    the $||-^v$ relation), and by showing that the identity substitution
+%%    is reducible.
+%%    \end{itemize}
+
+%%  \item Earlier proofs relied on two distinct logical relations with their
+%%  own fundamental lemmas, one to establish the aforementioned inversion
+%%  properties, another to prove the algorithm is complete.
+%%  The two relations differ by which equality relation is used to
+%%  compare terms, judgmental or algorithmic equality/conversion.
+
+%%  Two log. rels and lemmas might be the most pragmatic presentation in
+%%  a paper: you are not going to write out the proof for all the cases
+%%  again, and it would otherwise be hard to keep track of all the
+%%  assumptions necessary if one tries to create an abstraction to reuse.
+
+%%  When it comes to formalized proofs the incentives and difficulties
+%%  are reversed: you do have to provide complete proofs and the
+%%  typechecker keeps track of whether you are missing something. So
+%%  after formalizing the fundamental lemma for the first log. rel. we
+%%  abstracted over judgmental equality in the definition of the relation
+%%  and the properties needed for the fundamental lemma to go through
+%%  while also keeping an eye on what would be easily provable for
+%%  algorithmic equality.  We obtained a notion we called ``generic
+%%  equality'' which we use to parametrize the fundamental
+%%  lemma\footnote{Here I'd like to insert a special acknowlegment to
+%%    Joakim, who has performed the bulk of the formalization and derived
+%%    this abstraction}, which we then instantiate twice for the two
+%%  equalities of interest.
+%%  Maybe say what things about judg. equality we need to prove that
+%%    algorithmic equality is a generic equality. To make it clear why we need two stages like this.
+
+%%  \item We believe this formalization can form a good basis for applying
+%%  the proof technique to more complex theories, though we might need
+%%  some more abstraction passes to avoid too much copy-pasting programming.
+
+%%  \item
+%%    by analogy to gluing constructions, could reasonably expected to
+%%    be extended to new theories with presheaf models by taking richer
+%%    morphisms than just renamings.
+%%    Might need to deploy kripke trick more often, because fewer
+%%    predicates might be naturally monotonic, also might need to care
+%%    about naturality.
+%%    TODO: maybe check how hard it would be to integrate simon's proof.
+
+%%  \item Easy steps: more automated substition development, extension to
+%%  more of the standard type formers, recursive types. generalize to universe hierarchy.
+
+%%  \item Hard steps: how do you programmatically reuse proofs about e.g. Pi
+%%  types when typing judgments themselves might have to change? Maybe
+%%  just better to have easily modifiable code than trying to predict a
+%%  good abstraction (e.g. plenty of nothing, other modality-annotated pi types, ..., how to fit them in?).
+
+%%  \item Also doubles as a first step in bootstrapping Agda: could be
+%%  reasonably turned into a double checker for the core calculus.
+%% \end{itemize}
 
 \subsection{Statement of Contribution}
 \paragraph{First part}
