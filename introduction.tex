@@ -22,7 +22,9 @@
 \DeclareMathOperator{\prev}{\mathsf{prev}}
 \DeclareMathOperator{\next}{\ensuremath{\mathsf{next}}}
 \DeclareMathOperator{\Cube}{\square}
+\newcommand{\U}{\mathsf{U}}
 \newcommand{\sd}{.\,}
+\newcommand{\sNat}{\mathbb{N}}
 \begin{document}
 
 \chapter{Introduction}
@@ -483,6 +485,28 @@ tail (map-id {xs = xs} i) = map-id {xs = tail xs} i
   %% \end{itemize}
 
 \subsubsection{Sized Types}
+
+sized types have more explicit mention of stages in comparison to
+guarded types, this allows flexibility like being able to consider
+also monotone and not just antitone variance on the stage, and so also
+``size'' inductive types and support more complex patterns of
+recursion, not just corecursion.
+
+However since sizes are then actual arguments of the constructors of
+inductive types we have the problem that they interfere with the
+provable equalities about these types. For example for sized natural
+numbers $\sNat~i$ we end up having not just a single ``zero'' element
+but one of them for every size $j$ which is less than $i$.
+
+This creates distinctions where we would like none, and prevents us
+from deriving the actual type of natural numbers from the sized
+variant, because the multiple zeros would prevent it from being the
+fixed point of $\mathsf{Unit}{+}$, at least in the canonical way.
+
+
+
+
+
 \begin{itemize}
     \item too many zeros problem / not able to actually prove isomorphisms.
     \item sizes make a difference when indexing types but shouldn't make a difference in values.
@@ -522,10 +546,10 @@ tail (map-id {xs = xs} i) = map-id {xs = tail xs} i
     theorem about polymorphic functions.
 
     Another way to look at this is that we would expect parametricity
-    to imply that a function of type $f : (A : U) \to F A \to G A$
-    would be a nat. trans. when F and G are functors.  But if we have
-    U : $U_1$ and take F A = Unit, G A = U, we could write
-    $f = \lambda (A : U)\, (\_ : F A)\sd U$ which does not fit into a naturality square.
+    to imply that a function of type $f : (A : \U) \to F\,A \to G\,A$
+    would be a nat. trans. when $F$ and $G$ are functors.  But if we have
+    $\U : \U_1$ and take $F\,A = \mathsf{Unit}$, $G\,A = \U$, we could write
+    $f = \lambda (A : \U)\, (\_ : \mathsf{Unit})\sd \U$ which does not fit into a naturality square.
     It seems that polymorphism-as-pi only guarantees naturality when
     the codomain cannot allow the information we are polymorphic over
     to leak.
@@ -569,7 +593,7 @@ tail (map-id {xs = xs} i) = map-id {xs = tail xs} i
     \end{itemize}
 
 \paragraph{Normalization by evaluation for sized dependent types}
-    \item In NbE for Sized Types we also explore irrelevant size
+    In NbE for Sized Types we also explore irrelevant size
     quantification in a dependently typed language, but here
     irrelevance affects judgmental equality, and our technical
     contribution is an NbE algorithm for conversion checking.
