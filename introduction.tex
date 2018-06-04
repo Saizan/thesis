@@ -719,9 +719,9 @@ normalization, from a proof that a term is algorithmically equal to
 itself we can extract its normal form and a
 proof that it is judgmetally to the term.}
 
-Our proof goes by a kripke logical relation with contexts as worlds
+Our proof goes by a Kripke logical relation with contexts as worlds
 and renamings as morphisms between worlds. The relation is over open
-terms, hence the kripke structure, and based on reduction, in the
+terms, hence the Kripke structure, and based on reduction, in the
 sense that membership is determined by the weak head normal form
 (whnf) of a term, because of this we call it reducibility. For types
 the relation is defined inductively and just recurses in the subterms
@@ -771,7 +771,7 @@ proof of decidability of conversion.
 
 While the article only handles a fairly minimal type theory, we
 believe this formalization can form a good basis for applying the
-proof technique to more complex theories. For example the kripke
+proof technique to more complex theories. For example the Kripke
 structure could be extended to contain more than just renamings, but
 also maps from the indexing category for type theories whose
 denotational model is based on presheaf models. An example of a
@@ -841,17 +841,17 @@ core calculus.
 %%  normal form for the term and a proof that it's j.equal to the
 %%  original.
 
-%%  \item proof goes by kripke logical relation with contexts as worlds and renamings as morphisms between worlds.
+%%  \item proof goes by Kripke logical relation with contexts as worlds and renamings as morphisms between worlds.
 
 %%    by analogy to gluing constructions, could reasonably expected to
 %%    be extended to new theories with presheaf models by taking richer
 %%    morphisms than just renamings.
-%%    Might need to deploy kripke trick more often, because fewer
+%%    Might need to deploy Kripke trick more often, because fewer
 %%    predicates might be naturally monotonic, also might need to care
 %%    about naturality.
 %%    TODO: maybe check how hard it would be to integrate simon's proof.
 
-%%  \item the kripke part handles open terms.
+%%  \item the Kripke part handles open terms.
 
 %%  \item the logical relation is based on reduction, we look at the whnf of
 %%  things, for types it's inductive and just recurses in the subterms,
@@ -907,7 +907,7 @@ core calculus.
 %%    by analogy to gluing constructions, could reasonably expected to
 %%    be extended to new theories with presheaf models by taking richer
 %%    morphisms than just renamings.
-%%    Might need to deploy kripke trick more often, because fewer
+%%    Might need to deploy Kripke trick more often, because fewer
 %%    predicates might be naturally monotonic, also might need to care
 %%    about naturality.
 %%    TODO: maybe check how hard it would be to integrate simon's proof.
