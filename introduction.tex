@@ -232,27 +232,31 @@ poses.
   A$ can be derived using the recursive type $T = \Later T \to A$.
   %% Why strong normalization. ``strong'' maybe overkill, but in
   %% general we need more than head normalization.
-  Taking reduction to be the congruence closure of the usual $\beta$ rules
-  for application and projections plus the following law $(\next t)
-  \star (\next u) \mapsto \next (t\,u)$, would lead to an infinite
-  chain $\fix f \red f\,(\next (\fix f)) \red f\,(\next (f\,(\next (\fix f)))) \red
-  \ldots$, invalidating strong normalization.
 
-  We instead lift the concept of finite approximations directly from
+  Full reduction for this language
+  is the congruence closure of the usual $\beta$ rules
+  for application and projections plus the law $(\next t)
+  \star (\next u) \mapsto \next (t\,u)$.
+  Full reduction invalidates strong normalization as it leads,
+  for instance, to the infinite chain
+  $\fix f \red f\,(\next (\fix f)) \red f\,(\next (f\,(\next (\fix f)))) \red
+  \ldots$
+%
+  As a remedy, we lift the concept of finite approximations directly from
   the model and define a reduction relation indexed by a natural
   number $n$, which specifies under how many nested uses of $\next$ we
   are still allowed to reduce.
-
+%
   This strategy takes inspiration from the denotational semantics: if
   a term is supposed to represent a natural transformation in the
   topos of trees, $\mathsf{Set}^{\omega^\mathsf{op}}$, then we are
   entitled to apply it to a natural number and observe its behaviour
-  at that stage, but the semantics of $\next$ ignore its argument at
+  at that stage.  However, the semantics of $\next$ ignores its argument at
   stage zero, and it is this base case that bootstraps the recursion
   that justifies $\fix$, so it seems natural for reduction to also
   stop there.
 
-  The proof itself goes by showing that saturated sets (cite someone),
+  The proof itself goes by showing that saturated sets \TODO{cite someone},
   indexed by the stage as a natural number, form a model of the
   calculus. By saturated set we mean a predicate over terms which sits
   between the strongly neutral and the strongly normalizing terms, and
@@ -264,14 +268,14 @@ poses.
   type formers are antitone with respect to the stage, so it might be
   worthwhile to reformulate the model as a refinement of the gluing of
   the category of presheaves over typing contexts and stages, along the functor that
-  builds the presheaf of terms out of a type (cite Hofmann, Thorsten, ..?).
+  builds the presheaf of terms out of a type \TODO{cite Hofmann, Thorsten, ..?}.
 
   The fact that a term might have a different normal form for each
   stage introduces some problems for using this as a strategy to
   decide equality though, because later stages will generally
   recognize more terms as reducing to the same normal form.
   For base types and with a restricted context the stage does not
-  matter, as shown in (cite Rasmus and Patrick) but in general we do
+  matter, as shown in \TODO{cite Rasmus and Patrick} but in general we do
   not provide a bound on which stages to try when comparing two terms.
   An option would be to design a type theory where the staging is expected
   to influence the judgmental equality: one possibility is to consider
@@ -298,7 +302,8 @@ poses.
 
   Finally, since the strong normalization proof is fully formalized in
   Agda it has been stripped of the later modality components and taken
-  as the prototype implementation for the POPLMark Reloaded challenge (cite it),
+  as the prototype implementation for the POPLMark Reloaded challenge
+  \TODO{cite Pientka CPP 2017 invited talk},
   which aims to compare different approaches to syntax with binding in
   proof assistants by how they apply to a fairly involved but
   well-understood proof like strong normalization for the simply typed
@@ -364,7 +369,9 @@ poses.
   Cubical Type Theory (CTT) (cite CTT) takes the intuitions of Homotopy
   Type Theory about the identity type a step further, and uses paths
   as the representation of equality proofs themselves, as in maps from
-  an abstract interval type. Then reflexivity is not the only
+  an abstract interval type.  \TODO{Elaborate!  Here you can introduce
+    $\langle i \rangle t$ etc.}
+  Then reflexivity is not the only
   canonical element of the equality type, function extensionality just
   follows from abstraction for paths and function types, and
   univalence can be proven with the support of a special
@@ -382,7 +389,8 @@ poses.
               {\Gamma \vdash \dfix f\,1 = \next\,(f\,(\dfix f\,0)) : \Later A}
   \end{mathpar}
   so that we can define $\fix f := f\,(\dfix f\,0)$ and prove it
-  equal to its one step unfolding by $<i> f\,(\dfix f i)$.
+  equal to its one step unfolding by $\langle i \rangle f\,(\dfix f i)$.
+  \TODO{Define $\langle i \rangle t$.}
   Choosing $\dfix$ as the primitive rather than $\fix$ avoids the
   introduction of new canonical forms at an arbitrary type $A$, and
   confines them to $\Later A$ instead.
@@ -410,7 +418,10 @@ poses.
   The category of cubes $\Cube$ is the one used for the denotational
   semantics of CTT, so our model can be thought of as staged cubical sets.
 
-  To be fair if the aim is just to extend CTT with coinductive types
+
+  \TODO{The following is not dealing with guarded types anymore, so it
+    deserves a new subsection/paragraph...}
+  To be fair, if the aim is just to extend CTT with coinductive types
   whose equality is bisimulation we do not need to introduce the
   $\Later$ modality. As I discuss in (cite cocubical
   note)\footnote{although only for the case of streams} , cubical sets
