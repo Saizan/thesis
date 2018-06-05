@@ -23,6 +23,8 @@
 \DeclareMathOperator{\next}{\ensuremath{\mathsf{next}}}
 \DeclareMathOperator{\Cube}{\square}
 \DeclareMathOperator{\Unit}{\mathsf{Unit}}
+\DeclareMathOperator{\Size}{\mathsf{Size}}
+\DeclareMathOperator{\Set}{\mathsf{Set}}
 \newcommand{\U}{\mathsf{U}}
 \newcommand{\sd}{.\,}
 \newcommand{\sNat}{\mathbb{N}}
@@ -537,121 +539,73 @@ case.
 
 Parametricity has been studied before in the context of MLTT,
 both in the sense of categorical models satisfying parametricity
-\TOTO{cite Bob, and new Ghani stuff?} and as extensions of type theory
+\TODO{cite Bob, and new Ghani stuff?} and as extensions of type theory
 internalizing parametricity principles \TODO{cite Guilhem}.
 These works study how the $\Pi$ type itself enjoys interesting
 parametricity properties, in case the domain has an interesting notion
 of relation. However they are confronted with limitations with regards
 to trying to scale the identity extension lemma to universes.
-
-The identity extension lemma, used to derive naturality from
-parametricity, implies that the relational interpretation of a
-closed type is just equality, but if  this applied to our
-interpretation of the universe we wouldn't get any interesting theorem
-about polymorphic functions.%% say better!
-
-    %% Another way to look at this is that we would expect parametricity
-    %% to imply that a function of type $f : (A : \U) \to F\,A \to G\,A$
-    %% would be a nat. trans. when $F$ and $G$ are functors.  But if we have
-    %% $\U : \U_1$ and take $F\,A = \mathsf{Unit}$, $G\,A = \U$, we could write
-    %% $f = \lambda (A : \U)\, (\_ : \mathsf{Unit})\sd \U$ which does not fit into a naturality square.
-    %% It seems that polymorphism-as-pi only guarantees naturality when
-    %% the codomain cannot allow the information we are polymorphic over
-    %% to leak.
-
-
-
-
-%%\begin{itemize}
-%%     \item too many zeros problem / not able to actually prove isomorphisms.
-%%     \item sizes make a difference when indexing types but shouldn't make a difference in values.
-%%     \item need a way to indicate when size quantification should behave in a uniform way
-%%       \begin{itemize}
-%%       \item standard irrelevance like Pfenning does not work, because codomain relevant in sizes
-%%       \item intersection types as in ICC* or something do not play well with eta.
-%%       \end{itemize}
-
-%%     \item if we look at the semantics of (co)inductive types as (co)limits
-%%     of chains, then the condition we would like to impose is
-%%     naturality. But internalizing naturality directly would require us
-%%     to keep track of the variance of size variables in types and into
-%%     the realm of directed type theory, which is not well understood
-%%     yet.
-
-%%     \item However the semantics of lambda calculus give us relational
-%%     parametricity, a concept which also tries to characterize the
-%%     well-behavedness or invariance of maps for some of their
-%%     arguments, and indeed also specializes to naturality in many cases.
-
-%%     \item Parametricity has been studied before in the context of MLTT,
-%%     both in the sense of categorical models (cite Bob, and new Ghani
-%%     stuff?) satisfying parametricity and as extensions of type theory
-%%     internalizing parametricity principles (cite Guilhem).
-
-%%     \item those works study how Pi itself enjoys interesting parametricity
-%%     properties, in case the domain has an interesting notion of
-%%     relation. However they are confronted with limitations with
-%%     regards to trying to scale the identity extension lemma to
-%%     universes, especially a hierarchy of them.
-
-%%     The identity extension lemma, used to derive naturality from
-%%     parametricity, would require that the relational interpretation of
-%%     a closed type is just equality, but if this applied to our
-%%     interpretation of the universe we wouldn't get any interesting
-%%     theorem about polymorphic functions.
-
-%%     Another way to look at this is that we would expect parametricity
-%%     to imply that a function of type $f : (A : \U) \to F\,A \to G\,A$
-%%     would be a nat. trans. when $F$ and $G$ are functors.  But if we have
-%%     $\U : \U_1$ and take $F\,A = \mathsf{Unit}$, $G\,A = \U$, we could write
-%%     $f = \lambda (A : \U)\, (\_ : \mathsf{Unit})\sd \U$ which does not fit into a naturality square.
-%%     It seems that polymorphism-as-pi only guarantees naturality when
-%%     the codomain cannot allow the information we are polymorphic over
-%%     to leak.
-%%     \end{itemize}
+The identity extension lemma (IEL), used to derive naturality from
+parametricity, implies that the relational interpretation of a closed
+type is just equality, however when proving interesting properties
+about parametrically polymorphic functions we rely on the relational
+interpretation of the domain to be coarser than equality, most notably
+for the universe but not only \TODO{cite Atkey Noerthian stuff}.
+A specific example of this phenomenon is that we would like
+parametricity to imply that a function of type $f : (A : \U) \to F\,A
+\to G\,A$ is a natural transformation when $F$ and $G$ are
+functors. But if we have $\U : \U_1$ and take $F\,A = \mathsf{Unit}$,
+$G\,A = \U$, we can write $f = \lambda (A : \U)\, (\_ :
+\mathsf{Unit})\sd A$ which does not fit into a naturality square.
+As a consequence we have that polymorphism-as-$\Pi$ guarantees
+naturality when the codomain is ``simple'' enough to prevent the leak
+of information coming from elements of the domain type but does not
+scale to more general situations.
 
 \paragraph{Parametric Quantifiers for dependent type theory}
-    The solution of ``ParamDTT'' is to introduce new quantifiers which
-    restrict the use of the quantified variable through a system of
-    modalities, thus preventing such leaks even when the type of the
-    value we are currently building would be large/complex enough to
-    allow it.
+addresses this problem by introducing new quantifiers which restrict
+the use of the quantified variable through a system of modalities,
+thus preventing definitions like $f$ above.  With those quantifiers
+and a type $\Size$ which supports parametric-and-non well-founded
+induction we are able to internally build indexed initial and final
+coalgebras for functors that commute with parametric $\Size$
+quantification, which includes (finitary-branching) polynomial
+functors.
 
-    With those and a type ``Size'' which supports parametric-and-non
-    well-founded induction we are able to internally build indexed
-    initial and final coalgebras for functors that satisfy an
-    internal notion of (co)continuity (similar to the condition in
-    Rasmus paper), which includes (finitary-branching) polynomial
-    functors.
+We give a denotational semantics in a presheaf model,
+$\Set^{\mathsf{BCCube}^op}$ \TODO{check name}, of cubes generated by
+two distinct interval objects with a map between them: we use one to
+characterize equality, and the latter parametric relatedness.
 
-    The drawback is that our version of identity extension is
-    introduced as a propositional axiom, and future work is needed to
-    recover canonicity. The theory already uses concepts from
-    CoquandBernardyMoulin and Cubical Type Theory to discuss values
-    parametrically related, so we expect we can also take as model the
-    composition operation of CTT to give computational meaning to this
-    equality axiom.
+The theory does not admit canonicity, because our version of identity
+extension is introduced as an axiom which is only validated in the
+model.  The theory already uses $\mathsf{Path}$-like types from
+\TODO{cite CoquandBernardyMoulin} and Cubical Type Theory \TODO{cite
+  CTT} to discuss how values parametrically related, so we expect we
+can adapt the techniques of CTT to give computational meaning to the
+axioms we introduced.
 
-    We give a denotational semantics in a presheaf model,
-    $\hat{\mathsf{BCCube}}$ (todo: check name), of cubes generated by two distinct interval
-    objects, with a map between them, which we use as domains of
-    respectively paths and bridges, the former represent equalities,
-    and the latter parametric relatedness.
+Even without provide a prototype implementation as a fork of Agda, by
+adapting the present support for --cubical and an irrelevance
+modality. We found it quite helpful to experiment with the power of
+the theory and used it to formalize the examples in the paper. As a
+side-product, the effort spent adapting Agda to support parametricity
+as a modality then was reused to produce a prototype implementation of
+crisp type theory \TODO{cite Pitts et. al paper, agda-flat}, which
+seems to indicate the infrastrucure developed could be useful for
+different systems of modalities.
 
-    We also provide a prototype implementation as a fork of Agda, by
-    adapting the present support for --cubical and an irrelevance
-    modality. As a side-product, the effort spent adapting the support
-    for modalities to the ones in ParamDTT then meant the
-    implementation was easily adaptable to other schemes of modality,
-    which then to a prototype implementation of crisp type theory
-    (cite Pitts et. al paper).
 
-\paragraph{Normalization by evaluation for sized dependent types}
+\paragraph{Normalization by Evaluation for Sized Dependent Types}
     In NbE for Sized Types we also explore irrelevant size
     quantification in a dependently typed language, but here
     irrelevance affects judgmental equality, and our technical
     contribution is an NbE algorithm for conversion checking.
 
+    also dedicated parametric quantifier but for a more limited theory where it applies only to sizes,
+    however focus on definitional equalities i.e. definitional irrelevance and NbE for conversion checking.
+
+    
     The main hurdle is how to reconcile typed judgmental equality with
     irrelevance, since given $f : \forall i : \mathsf{Size}. T i$ we would like
     $f~i$ and $f~j$ to be equal, but they would naturally live in
@@ -722,6 +676,167 @@ about polymorphic functions.%% say better!
      paths-over-a-bridge.
      \end{itemize}
     \end{itemize}
+
+%%\begin{itemize}
+%%     \item too many zeros problem / not able to actually prove isomorphisms.
+%%     \item sizes make a difference when indexing types but shouldn't make a difference in values.
+%%     \item need a way to indicate when size quantification should behave in a uniform way
+%%       \begin{itemize}
+%%       \item standard irrelevance like Pfenning does not work, because codomain relevant in sizes
+%%       \item intersection types as in ICC* or something do not play well with eta.
+%%       \end{itemize}
+
+%%     \item if we look at the semantics of (co)inductive types as (co)limits
+%%     of chains, then the condition we would like to impose is
+%%     naturality. But internalizing naturality directly would require us
+%%     to keep track of the variance of size variables in types and into
+%%     the realm of directed type theory, which is not well understood
+%%     yet.
+
+%%     \item However the semantics of lambda calculus give us relational
+%%     parametricity, a concept which also tries to characterize the
+%%     well-behavedness or invariance of maps for some of their
+%%     arguments, and indeed also specializes to naturality in many cases.
+
+%%     \item Parametricity has been studied before in the context of MLTT,
+%%     both in the sense of categorical models (cite Bob, and new Ghani
+%%     stuff?) satisfying parametricity and as extensions of type theory
+%%     internalizing parametricity principles (cite Guilhem).
+
+%%     \item those works study how Pi itself enjoys interesting parametricity
+%%     properties, in case the domain has an interesting notion of
+%%     relation. However they are confronted with limitations with
+%%     regards to trying to scale the identity extension lemma to
+%%     universes, especially a hierarchy of them.
+
+%%     The identity extension lemma, used to derive naturality from
+%%     parametricity, would require that the relational interpretation of
+%%     a closed type is just equality, but if this applied to our
+%%     interpretation of the universe we wouldn't get any interesting
+%%     theorem about polymorphic functions.
+
+%%     Another way to look at this is that we would expect parametricity
+%%     to imply that a function of type $f : (A : \U) \to F\,A \to G\,A$
+%%     would be a nat. trans. when $F$ and $G$ are functors.  But if we have
+%%     $\U : \U_1$ and take $F\,A = \mathsf{Unit}$, $G\,A = \U$, we could write
+%%     $f = \lambda (A : \U)\, (\_ : \mathsf{Unit})\sd A$ which does not fit into a naturality square.
+%%     It seems that polymorphism-as-pi only guarantees naturality when
+%%     the codomain cannot allow the information we are polymorphic over
+%%     to leak.
+%%     \end{itemize}
+
+%% \paragraph{Parametric Quantifiers for dependent type theory}
+%%     The solution of ``ParamDTT'' is to introduce new quantifiers which
+%%     restrict the use of the quantified variable through a system of
+%%     modalities, thus preventing such leaks even when the type of the
+%%     value we are currently building would be large/complex enough to
+%%     allow it.
+
+%%     With those and a type ``Size'' which supports parametric-and-non
+%%     well-founded induction we are able to internally build indexed
+%%     initial and final coalgebras for functors that satisfy an
+%%     internal notion of (co)continuity (similar to the condition in
+%%     Rasmus paper), which includes (finitary-branching) polynomial
+%%     functors.
+
+%%     The drawback is that our version of identity extension is
+%%     introduced as a propositional axiom, and future work is needed to
+%%     recover canonicity. The theory already uses concepts from
+%%     CoquandBernardyMoulin and Cubical Type Theory to discuss values
+%%     parametrically related, so we expect we can also take as model the
+%%     composition operation of CTT to give computational meaning to this
+%%     equality axiom.
+
+%%     We give a denotational semantics in a presheaf model,
+%%     $\hat{\mathsf{BCCube}}$ (todo: check name), of cubes generated by two distinct interval
+%%     objects, with a map between them, which we use as domains of
+%%     respectively paths and bridges, the former represent equalities,
+%%     and the latter parametric relatedness.
+
+%%     We also provide a prototype implementation as a fork of Agda, by
+%%     adapting the present support for --cubical and an irrelevance
+%%     modality. As a side-product, the effort spent adapting the support
+%%     for modalities to the ones in ParamDTT then meant the
+%%     implementation was easily adaptable to other schemes of modality,
+%%     which then to a prototype implementation of crisp type theory
+%%     (cite Pitts et. al paper).
+
+%% \paragraph{Normalization by evaluation for sized dependent types}
+%%     In NbE for Sized Types we also explore irrelevant size
+%%     quantification in a dependently typed language, but here
+%%     irrelevance affects judgmental equality, and our technical
+%%     contribution is an NbE algorithm for conversion checking.
+
+%%     The main hurdle is how to reconcile typed judgmental equality with
+%%     irrelevance, since given $f : \forall i : \mathsf{Size}. T i$ we would like
+%%     $f~i$ and $f~j$ to be equal, but they would naturally live in
+%%     different types $T~i$ and $T~j$.
+%%     \footnote{In ParamDTT, irrelevance only gives prop. equalities,
+%%       and we have a notion of heterogeneous equality over two
+%%       parametrically related types}
+%%     \begin{itemize}
+%%     \item GDTT similarly has clock irrelevance, given $t : \forall
+%%     \kappa\sd T$, $T \# \kappa$ then $t~\kappa = t~\kappa' : T$, the
+%%     side condition makes the conclusion type correct
+%%     \footnote{it is also required for soundness, but that's because
+%%       clock quantification behaves more like an actual product than
+%%       our $\forall$}
+%%     , but it's not clear how to integrate the rule into a conversion
+%%     algorithm as for example it can be used to prove
+%%     $f : \forall \kappa\sd Bool \times T \kappa \vdash fst (f~\kappa) = fst (f~\kappa') : Bool$
+%%     but only by reconstructing the term $t = \lambda \kappa\sd fst
+%%     (f~\kappa)$, because the rule cannot be applied to $f$ directly
+%%     due to its type.
+%%     Maybe some form of anti-unification could be deployed but ``Clocks
+%%     are ticking, no more delays'' plans on turning this into a
+%%     propositional equality instead.
+
+%%     \item Our paper takes a different approach and instead of a separate
+%%     size irrelevance rule we make the typing and congruence rules for
+%%     application of $\forall i. T$ to be irrelevant in the size, like so:
+
+%%       TODO get rules from the paper
+
+%%    The intuition is that we are approximating curry-style equality for
+%%    church-style terms: the sizes in the application are there as
+%%    annotations for a typechecking algorithm, but they are actually
+%%    ignored by the type theory itself.
+
+%%    Concretely, the reason we can be so liberal with sizes is that
+%%    in our type theory they never affect the overall ``shape'' of a
+%%    type, as size expressions only appear in size applications and as
+%%    indexes of datatypes, and there's no size-case. That means that the
+%%    same type directed eta equality rules will apply to both $t = u :
+%%    T[i:=a]$ and $t = u : T[i:=b]$.
+
+%%    \item We prove conversion decidable by presenting a Normalization by
+%%    Evaluation algorithm its proofs of soundness and completeness.
+%%    The nbe includes the usual reflection and reification steps, which
+%%    take a type to orchestrate expansion to eta-long normal forms.
+%%    The notion of type shapes comes back in the completeness proof, as
+%%    the types provided to reflection and reification end up diverging
+%%    from the type we want to compare the terms at.
+%%    But all is well as long as the formers are the same approximate
+%%    shape as the latter (defined formally in the paper), because they
+%%    will trigger the same eta-expansions.
+%%    We just have to generalize the corresponding theorems to get the
+%%    induction through.
+
+%%  \item limitations:
+%%      \begin{itemize}
+%%      \item still wish we could have an incremental whnf and
+%%      head-comparison conversion checking. the algorithm would have to
+%%      figure out a suitable size ``b'' to use in the type in the
+%%      congruence rule, probably by some kind of unification algorithm.
+
+%%      \item ignoring sizes in typing is not necessarily how you want to do
+%%      it either, using the semantics from the parametric quantifiers
+%%      paper as a guide we want to develop a theory with an
+%%      heterogeneous judgmental equality.
+%%      The judgment would be a decidable approximation of
+%%      paths-over-a-bridge.
+%%      \end{itemize}
+%%     \end{itemize}
 
 \subsection{Third Part}
 
