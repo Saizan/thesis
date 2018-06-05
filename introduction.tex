@@ -22,6 +22,7 @@
 \DeclareMathOperator{\prev}{\mathsf{prev}}
 \DeclareMathOperator{\next}{\ensuremath{\mathsf{next}}}
 \DeclareMathOperator{\Cube}{\square}
+\DeclareMathOperator{\Unit}{\mathsf{Unit}}
 \newcommand{\U}{\mathsf{U}}
 \newcommand{\sd}{.\,}
 \newcommand{\sNat}{\mathbb{N}}
@@ -512,59 +513,102 @@ but one of them for every size $j$ which is less than $i$.
 This creates distinctions where we would like none, and prevents us
 from deriving the actual type of natural numbers from the sized
 variant, because the multiple zeros would prevent it from being the
-fixed point of $\mathsf{Unit}{+}$, at least in the canonical way.
+fixed point of $\Unit +$, at least in the canonical way.
+
+However we also cannot disregard sizes completely when comparing terms
+for equality, because the difference between e.g., $\sNat~i$ and
+$\sNat~(i+1)$ is crucial to ensure the well-foundedness of programs.
+We need then a way to keep track of where size arguments can be
+ignored, or in other words when functions use them in a uniform enough
+way to produce the same result for different sizes.
+
+If we look at the semantics of (co)inductive types as (co)limits of
+chains, then the uniformity we would like to impose is naturality. But
+internalizing naturality directly would require us to keep track of
+the variance of size variables in types and into the realm of directed
+type theory, which is not well understood yet \cite{Harper-Licata,
+  Shulman}. However the semantics of lambda calculus give us
+relational parametricity \TODO{cite Reynolds}, a concept which also
+tries to characterize the well-behavedness or invariance of maps for
+some of their arguments, and indeed also specializes to naturality in
+many cases, so parametric quanfication seems a good fit for our
+case.
+
+
+Parametricity has been studied before in the context of MLTT,
+both in the sense of categorical models satisfying parametricity
+\TOTO{cite Bob, and new Ghani stuff?} and as extensions of type theory
+internalizing parametricity principles \TODO{cite Guilhem}.
+These works study how the $\Pi$ type itself enjoys interesting
+parametricity properties, in case the domain has an interesting notion
+of relation. However they are confronted with limitations with regards
+to trying to scale the identity extension lemma to universes.
+
+The identity extension lemma, used to derive naturality from
+parametricity, implies that the relational interpretation of a
+closed type is just equality, but if  this applied to our
+interpretation of the universe we wouldn't get any interesting theorem
+about polymorphic functions.%% say better!
+
+    %% Another way to look at this is that we would expect parametricity
+    %% to imply that a function of type $f : (A : \U) \to F\,A \to G\,A$
+    %% would be a nat. trans. when $F$ and $G$ are functors.  But if we have
+    %% $\U : \U_1$ and take $F\,A = \mathsf{Unit}$, $G\,A = \U$, we could write
+    %% $f = \lambda (A : \U)\, (\_ : \mathsf{Unit})\sd \U$ which does not fit into a naturality square.
+    %% It seems that polymorphism-as-pi only guarantees naturality when
+    %% the codomain cannot allow the information we are polymorphic over
+    %% to leak.
 
 
 
 
+%%\begin{itemize}
+%%     \item too many zeros problem / not able to actually prove isomorphisms.
+%%     \item sizes make a difference when indexing types but shouldn't make a difference in values.
+%%     \item need a way to indicate when size quantification should behave in a uniform way
+%%       \begin{itemize}
+%%       \item standard irrelevance like Pfenning does not work, because codomain relevant in sizes
+%%       \item intersection types as in ICC* or something do not play well with eta.
+%%       \end{itemize}
 
-\begin{itemize}
-    \item too many zeros problem / not able to actually prove isomorphisms.
-    \item sizes make a difference when indexing types but shouldn't make a difference in values.
-    \item need a way to indicate when size quantification should behave in a uniform way
-      \begin{itemize}
-      \item standard irrelevance like Pfenning does not work, because codomain relevant in sizes
-      \item intersection types as in ICC* or something do not play well with eta.
-      \end{itemize}
+%%     \item if we look at the semantics of (co)inductive types as (co)limits
+%%     of chains, then the condition we would like to impose is
+%%     naturality. But internalizing naturality directly would require us
+%%     to keep track of the variance of size variables in types and into
+%%     the realm of directed type theory, which is not well understood
+%%     yet.
 
-    \item if we look at the semantics of (co)inductive types as (co)limits
-    of chains, then the condition we would like to impose is
-    naturality. But internalizing naturality directly would require us
-    to keep track of the variance of size variables in types and into
-    the realm of directed type theory, which is not well understood
-    yet.
+%%     \item However the semantics of lambda calculus give us relational
+%%     parametricity, a concept which also tries to characterize the
+%%     well-behavedness or invariance of maps for some of their
+%%     arguments, and indeed also specializes to naturality in many cases.
 
-    \item However the semantics of lambda calculus give us relational
-    parametricity, a concept which also tries to characterize the
-    well-behavedness or invariance of maps for some of their
-    arguments, and indeed also specializes to naturality in many cases.
+%%     \item Parametricity has been studied before in the context of MLTT,
+%%     both in the sense of categorical models (cite Bob, and new Ghani
+%%     stuff?) satisfying parametricity and as extensions of type theory
+%%     internalizing parametricity principles (cite Guilhem).
 
-    \item Parametricity has been studied before in the context of MLTT,
-    both in the sense of categorical models (cite Bob, and new Ghani
-    stuff?) satisfying parametricity and as extensions of type theory
-    internalizing parametricity principles (cite Guilhem).
+%%     \item those works study how Pi itself enjoys interesting parametricity
+%%     properties, in case the domain has an interesting notion of
+%%     relation. However they are confronted with limitations with
+%%     regards to trying to scale the identity extension lemma to
+%%     universes, especially a hierarchy of them.
 
-    \item those works study how Pi itself enjoys interesting parametricity
-    properties, in case the domain has an interesting notion of
-    relation. However they are confronted with limitations with
-    regards to trying to scale the identity extension lemma to
-    universes, especially a hierarchy of them.
+%%     The identity extension lemma, used to derive naturality from
+%%     parametricity, would require that the relational interpretation of
+%%     a closed type is just equality, but if this applied to our
+%%     interpretation of the universe we wouldn't get any interesting
+%%     theorem about polymorphic functions.
 
-    The identity extension lemma, used to derive naturality from
-    parametricity, would require that the relational interpretation of
-    a closed type is just equality, but if this applied to our
-    interpretation of the universe we wouldn't get any interesting
-    theorem about polymorphic functions.
-
-    Another way to look at this is that we would expect parametricity
-    to imply that a function of type $f : (A : \U) \to F\,A \to G\,A$
-    would be a nat. trans. when $F$ and $G$ are functors.  But if we have
-    $\U : \U_1$ and take $F\,A = \mathsf{Unit}$, $G\,A = \U$, we could write
-    $f = \lambda (A : \U)\, (\_ : \mathsf{Unit})\sd \U$ which does not fit into a naturality square.
-    It seems that polymorphism-as-pi only guarantees naturality when
-    the codomain cannot allow the information we are polymorphic over
-    to leak.
-
+%%     Another way to look at this is that we would expect parametricity
+%%     to imply that a function of type $f : (A : \U) \to F\,A \to G\,A$
+%%     would be a nat. trans. when $F$ and $G$ are functors.  But if we have
+%%     $\U : \U_1$ and take $F\,A = \mathsf{Unit}$, $G\,A = \U$, we could write
+%%     $f = \lambda (A : \U)\, (\_ : \mathsf{Unit})\sd \U$ which does not fit into a naturality square.
+%%     It seems that polymorphism-as-pi only guarantees naturality when
+%%     the codomain cannot allow the information we are polymorphic over
+%%     to leak.
+%%     \end{itemize}
 
 \paragraph{Parametric Quantifiers for dependent type theory}
     The solution of ``ParamDTT'' is to introduce new quantifiers which
@@ -601,7 +645,6 @@ fixed point of $\mathsf{Unit}{+}$, at least in the canonical way.
     implementation was easily adaptable to other schemes of modality,
     which then to a prototype implementation of crisp type theory
     (cite Pitts et. al paper).
-    \end{itemize}
 
 \paragraph{Normalization by evaluation for sized dependent types}
     In NbE for Sized Types we also explore irrelevant size
