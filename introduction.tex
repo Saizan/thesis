@@ -159,35 +159,96 @@ still further work to be done in this direction.
 
 \subsection{Second Part}
 
-motivate type-based totality checking (quite broader origins actually, then applied to type theory!)
+The second part of this thesis presents some contributions to
+type-based totality checking, which in our case refers to systems with
+sized types \TODO{cite Hughes} or guarded recursive types \TODO{cite
+  Nakano or Lars/Ramsus?}.
 
-  \begin{itemize}
-  \item show general problems, copy some examples from papers.
-  \item idea: approximations of mu/nu up to an ordinal. keep track of stages in types
-  \item (well-founded) induction on stages as a typing rule for recursive definitions/semantic model
-    - examples
-  \item overlooked in sized-types: some approximation chains never truly
-  stabilize but are useful none-the-less: guarded types to abstract
-  over step-indexing models. still terminating as types and fixpoints of sized functors.
-  \item Guarded types do this using Nakano's modality instead of explicit stages. (guarded recursive types: recursion in types only under later)
-    \begin{itemize}
-    \item give the Fref example.
-    \item also tying the knot example from Atkey?
-    \end{itemize}
+Programming in a functional language typically
+involves (co)recursive definitions dealing with algebraic datatypes.
+In dependent type theory admitting only total definitions is a
+prerequisite for consistency, as otherwise the empty type could be
+inhabited, so typical implementations which allow direct (co)recursion
+employ \TODO{black box} termination checkers based on a structural
+ordering \TODO{cite [Giménez 1995]}, possibly with some extensions
+\TODO{cite [Abel and Altenkirch 2002] and [Lee et al. 2001; Wahlstedt
+    2007]}.
+Such termination checkers however get in the way of some typical
+functional programming patterns like the use of higher order functions.
+We can look at an Haskell example that defines a map function
+for rose trees
+\begin{verbatim}
+data RoseTree a = Node a [RoseTree a]
 
-  \item Funnily enough such fixed-points can be back-ported to
-    sized-types with a sufficiently strong language (e.g. higher-rank
-    size quantification):
-    \begin{itemize}
-    \item example: fix with SizeLt. Type of fix is quite different from
-    $(\mathsf{Later} A \to  A) \to A$ because we do not assume antitonicity.
+mapRT :: (a -> b) -> RoseTree a -> RoseTree b
+mapRT f (Node x ts) = Node (f x) (map (mapRT f) ts)
+\end{verbatim}
+if we were to translate \verb|mapRT| to Agda the termination checker
+would complain that the recursive call is not justified because it is
+not visibly applied to any subterm of \verb|Node x ts|, and in fact
+whether this function is total depends on the behaviour of \verb|map|.
+Here a simple workaround is to mutually define a specialized
+\verb|map-mapRT| so that the recursion pattern becomes manifest.
+This kind of inlining is not always possible though, as another basic
+example let us take \verb|unfold|,
+\begin{verbatim}
+unfold :: (a -> Maybe (a, b)) -> a -> [b]
+unfold f x = case f x of
+  Just (x', b) -> b : unfold f x'
+  Nothing      -> []
+\end{verbatim}
+if we consider \verb|[b]| as the type of finite lists, then whether
+\verb|unfold f| again depends on the behaviour of \verb|f|, which in
+this case is unknown until \verb|unfold| gets applied.
 
-    \item termination problems if we are so liberal with sizes: ..., Maybe Size< should be banned as a type and only SizeLt allowed.
-    \item really considering sizes as ordinals your programs can do
-         induction over gives a more accurate view of their power than sizes as just
-         annotations to help with checking normalization of (co)recursive definitions over (co)data.
-    \end{itemize}
-    \end{itemize}
+Type-based totality checking instead aims to keep track of the
+relevant information about functions' behaviour in their type. A
+major component is to internalize the fact that (co)inductive types
+are typically given semantics as the point where a chain
+approximations to the type stabilize.
+If the language can discuss the intermediate steps in those chains
+then it has more expressivity to discuss the information flow of
+recursive definitions.
+
+This approach is very explicit with sized types, for example in Agda
+we could define a sized version of the type of rose trees,
+\verb|RoseTree A i|, which is inhabited by trees of height bounded by
+the size \verb|i|, then definition of \verb|mapRT| would be accepted
+as total because the recursive call would be at type
+\verb|RoseTree A j → RoseTree B j| for some size \verb|j|. Guarded
+recursive types instead keep this staging more implicit by the use of
+Nakano's later modality, $\Later$, which is used to ``guard''
+recursive positions in the definition of types like \verb|Stream|, so
+that types can keep track of the ability to access what in this case
+would be the tail.  Other than its applications to productivity of
+corecursive and ``tying-the-knot'' definitions \TODO{cite Conor and
+  Bob}, a motivating application of guarded types comes from the
+observation that it can be useful to consider chains of types that
+never actually stabilize.  This happens with negative occurences of in
+the definition of recursive types, as for example a type $T$ such that
+$T \simeq (\Later T \to A)$, and has been applied to models of program
+logics as a less bureaucratic alternative to explicit step-indexing
+\TODO{cite arxiv:1208.3596}.
+
+%%     \begin{itemize}
+%%     \item give the Fref example.
+%%     \item also tying the knot example from Atkey? example of recursion not actually tied to any datatype
+%%     \end{itemize}
+
+    
+%%   \item Funnily enough such fixed-points can be back-ported to
+%%     sized-types with a sufficiently strong language (e.g. higher-rank
+%%     size quantification):
+%%     \begin{itemize}
+%%     \item example: fix with SizeLt. Type of fix is quite different from
+%%     $(\mathsf{Later} A \to  A) \to A$ because we do not assume antitonicity.
+
+%%     \item termination problems if we are so liberal with sizes: ..., Maybe Size< should be banned as a type and only SizeLt allowed.
+%%     \item really considering sizes as ordinals your programs can do
+%%          induction over gives a more accurate view of their power than sizes as just
+%%          annotations to help with checking normalization of (co)recursive definitions over (co)data.
+%%     \end{itemize}
+%%     \end{itemize}
     %% Not So Sure About integrating this.
     %% - $\inf$ question: what is $fix (\ i X -> Later i X -> X) \inf$
     %% supposed to be? Do we really need $\inf$, or should we rather have
@@ -199,10 +260,6 @@ motivate type-based totality checking (quite broader origins actually, then appl
     %%      coinductive one because of unique fixpoints, and so the structural
     %%      termination checker gets confused.
     %%      %% I Like This Part.
-
-
-
-%% -- state-of-the art and contributions i guess?
 
 \subsubsection{Guarded Types}
 
