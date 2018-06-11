@@ -413,8 +413,11 @@ poses.
   Cubical Type Theory (CTT)~\cite{cohenCoquandHuberMortberg:cubical} takes the intuitions of Homotopy
   Type Theory about the identity type a step further, and uses paths
   as the representation of equality proofs themselves, as in maps from
-  an abstract interval type.  \TODO{Elaborate!  Here you can introduce
-    $\langle i \rangle t$ etc.}
+  an abstract interval type:
+  elements of $\mathsf{Path}_A~a~b$ are built using path abstraction
+  $\langle i \rangle t$ where $t$ is an element of $A$ with an extra
+  interval variable $i$ and furthermore $t[0/i] = a$ and $t[1/i] = b$,
+  where $0$ and $1$ are the two endpoints of the interval.
   Then reflexivity is not the only
   canonical element of the equality type, function extensionality just
   follows from abstraction for paths and function types, and
@@ -434,7 +437,6 @@ poses.
   \end{mathpar}
   so that we can define $\fix f := f\,(\dfix f\,0)$ and prove it
   equal to its one step unfolding by $\langle i \rangle f\,(\dfix f i)$.
-  \TODO{Define $\langle i \rangle t$.}
   Choosing $\dfix$ as the primitive rather than $\fix$ avoids the
   introduction of new canonical forms at an arbitrary type $A$, and
   confines them to $\Later A$ instead.
