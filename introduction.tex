@@ -481,8 +481,8 @@ poses.
   need to have a theory that allows to define paths corecursively, and
   for that copatterns seem to be a very good fit, as shown by this
   example in ``Cubical Agda''\footnote{the option \texttt{--cubical} available from the master branch of the Agda proof assistant at the time of writing}.
+  \TODO{use agda --latex}
 \begin{verbatim}
---   TODO use agda --latex
 record Stream (A : Set) : Set where
   coinductive
   constructor _,_
@@ -546,29 +546,20 @@ tail (map-id {xs = xs} i) = map-id {xs = tail xs} i
 
 \subsubsection{Sized Types}
 
-\TODO{Suggestion for formulation:
 In comparison to guarded types, \emph{sized types} mention the stages
 explicitly.  Further, besides antitone dependency on the stage as for
-corecursion, sized types can be inductive and increase with the size.}
-Sized types have more explicit mention of stages in comparison to
-guarded types, this allows flexibility like being able to consider
-also monotone and not just antitone variance on the stage, and so also
-``size'' inductive types and support more complex patterns of
-recursion, not just corecursion.
-
+corecursion, sized types can be inductive and increase with the size.
 However since sizes are then actual arguments of the constructors of
-inductive types we have the problem that they interfere with the
-provable equalities about these types. For example for sized natural
-numbers $\sNat~i$ we end up having not just a single ``zero'' element
-but one of them for every size $j$ which is less than $i$.
+inductive types we have the problem that they interfere with their
+equality.
+For example, sized natural
+numbers $\sNat~i$ end up having not just a single ``zero'' element
+but one for each size $j$ which is less than $i$.
 
 This creates distinctions where we would like none, and prevents us
 from deriving the actual type of natural numbers from the sized
 variant, because the multiple zeros would prevent it from being the
-fixed point of $\Unit +$,
-\TODO{$\Unit +$ looks a bit strange.  You could use
-``the Maybe functor'' or the ``option functor'' which you define
-inline or in a footnote.}
+fixed point of the $\mathsf{Maybe}~X = \Unit + X$ functor,
 at least in the canonical way.
 
 However we also cannot disregard sizes completely when comparing terms
