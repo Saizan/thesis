@@ -75,8 +75,7 @@ for termination and productivity. The third with decidability of
 conversion of type theory.
 
 \subsection{First part}
-The issues with writing programs we discussed so far
-\TODO{Recapitulate the relevant issues: expressivity of program construction vs. simplicity of eliminators}
+The expressivity issues with writing programs we discussed so far
 also apply to
 what might seem closer to formalizations of mathematics, as soon as the
 latter involves non-trivial constructions.
@@ -86,24 +85,19 @@ thought of as paths connecting the two values being equated. Types are
 then interpreted as topological spaces up to homotopy.
 
 It then becomes natural to classify types according to the complexity
-of their topology, we call a type \emph{contractible} if it is
-equivalent to \TODO{Should ``equivalent'' be made more precise?  In
-  the context, would it mean ``continuously deformable''?  Maybe the
-  topological interpretation could be elaborated a bit more...}
-the unit type, \TODO{Parallel this (``unit type'') with the
-  topological equivalent (e.g. ``one-point space''!?)}
-then we say that a type has homotopy level $n$ (or is an
-$n$-type) if its ($n{+}2$)-iterated identity type is contractible.
-\TODO{Also spell out the $-2$-case, the $0$-iterated identity type.}
+of the topology of their associated space, and we can do so by
+definitions completely internal to the theory, rather than refer to
+the interpretation: we call a type \emph{contractible} if it is
+equivalent to the unit type, then we say that a type has homotopy level $n$ (or is an
+$n$-type) if its ($n{+}2$)-iterated identity type is contractible. A $-2$-type is then a contractible one.
 As an example,
 $0$-types behave much like discrete spaces, since all paths are
-trivial, \TODO{Elaborate ``trivial'' like, ``i.e., continuously
-  deformable into the degenerate, constant/stationary path''}
+trivial, as in any two parallel ones are equal,
 and so are a suitable representation of sets \cite{rijkeSpitters:mscs15},
 while ($-1$)-types are regarded as mere propositions, i.e.,
-proof-irrelevant. \TODO{...meaning that all elements of a $-1$-type are
-  connected, and it only matters whether there is some element or none
-  at all}
+proof-irrelevant, meaning that all elements of a $-1$-type are
+  connected by a path, and it only matters whether there is some element or none
+  at all.
 It happens that some constructions, like pushouts, do not naturally
 preserve the homotopy level, e.g., build sets out of sets.  Or maybe we
 would like to turn constructive existence into a mere proposition.  For
